@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>Tags on True Alarm</title>
+        <link>https://truealarm.github.io/tags/</link>
+        <description>Recent content in Tags on True Alarm</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>en-us</language>
+        <lastBuildDate>Sun, 20 Nov 2022 03:54:03 +0900</lastBuildDate><atom:link href="https://truealarm.github.io/tags/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Atomic operation</title>
+        <link>https://truealarm.github.io/tags/atomic-operation/</link>
+        <pubDate>Sun, 20 Nov 2022 03:54:03 +0900</pubDate>
+        
+        <guid>https://truealarm.github.io/tags/atomic-operation/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Mutex</title>
+        <link>https://truealarm.github.io/tags/mutex/</link>
+        <pubDate>Sun, 20 Nov 2022 03:54:03 +0900</pubDate>
+        
+        <guid>https://truealarm.github.io/tags/mutex/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Race condition</title>
+        <link>https://truealarm.github.io/tags/race-condition/</link>
+        <pubDate>Sun, 20 Nov 2022 03:54:03 +0900</pubDate>
+        
+        <guid>https://truealarm.github.io/tags/race-condition/</guid>
+        <description></description>
+        </item>
+        
+    </channel>
+</rss>

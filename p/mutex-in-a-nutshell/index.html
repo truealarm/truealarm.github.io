@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="en-us" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='뮤텍스에 관한 기본적인 지식을 정리해보았습니다.'><title>Mutex in a nutshell</title>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='뮤텍스에 관한 기본적인 지식을 정리해보았습니다.'>
+<title>Mutex in a nutshell</title>
 
 <link rel='canonical' href='https://truealarm.github.io/p/mutex-in-a-nutshell/'>
 
-<link rel="stylesheet" href="/scss/style.min.18145888f21de6cb02d8cb0891be8240096206785da14eda35f6c23c239b966a.css"><meta property='og:title' content='Mutex in a nutshell'>
+<link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='Mutex in a nutshell'>
 <meta property='og:description' content='뮤텍스에 관한 기본적인 지식을 정리해보았습니다.'>
 <meta property='og:url' content='https://truealarm.github.io/p/mutex-in-a-nutshell/'>
 <meta property='og:site_name' content='True Alarm'>
@@ -77,6 +78,7 @@
                         href='https://github.com/truealarm'
                         target="_blank"
                         title="GitHub"
+                        rel="me"
                     >
                         
                         
@@ -96,6 +98,7 @@
                         href='https://twitter.com/404'
                         target="_blank"
                         title="Twitter"
+                        rel="me"
                     >
                         
                         
@@ -222,7 +225,52 @@
         </div>
     </ol>
 </aside>
-<main class="main full-width">
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">Table of contents</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#race-condition">Race condition</a></li>
+    <li><a href="#mutual-exclusion">Mutual Exclusion</a></li>
+    <li><a href="#deadlock-freedom">Deadlock Freedom</a></li>
+    <li><a href="#lockout-freedom">Lockout Freedom</a></li>
+    <li><a href="#hardware-implemenation">Hardware implemenation</a></li>
+    <li><a href="#software-implemenation">Software implemenation</a>
+      <ol>
+        <li><a href="#dekkers-algorithm">Dekker&rsquo;s algorithm</a></li>
+        <li><a href="#lamports-bakery-algorithm">Lamport&rsquo;s bakery algorithm</a></li>
+      </ol>
+    </li>
+    <li><a href="#references">References</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
     <article class="has-image main-article">
     <header class="article-header">
         <div class="article-image">
@@ -262,6 +310,9 @@
     </div>
 
     
+    
+    
+    
     <footer class="article-time">
         
             <div>
@@ -298,19 +349,16 @@
 
     
 </div>
+
 </header>
 
     <section class="article-content">
     
     
-    <p>mutex(Mutual execlusion)은 다수의 프로세스나 스레드가 공유하는 자원을 안전하게 사용(concurrent control)할 수 있도록 해주는 기술입니다. 상호 배제라는 직역의 의미대로 한 스레드가 이미 임계 영역에 진입했다면 다른 스레드가 임계 영역에 진입하지 못하도록 막아줍니다. mutex의 원리나 필요성을 제대로 이해하지 않고 멀티 스레드 프로그래밍에 손을 댄다면, <a class="link" href="https://en.wikipedia.org/wiki/Race_condition"  target="_blank" rel="noopener"
-    >Race condition</a>라고 불리는 재앙을 초래합니다.</p>
+    <p>mutex(Mutual execlusion)은 다수의 프로세스나 스레드가 공유하는 자원을 안전하게 사용(concurrent control)할 수 있도록 해주는 기술입니다. 상호 배제라는 직역의 의미대로 한 스레드가 이미 임계 영역에 진입했다면 다른 스레드가 임계 영역에 진입하지 못하도록 막아줍니다. mutex의 원리나 필요성을 제대로 이해하지 않고 멀티스레드 프로그래밍을 한다면, <a class="link" href="https://en.wikipedia.org/wiki/Race_condition"  target="_blank" rel="noopener"
+    >Race condition</a> 같은 문제를 초래합니다.</p>
 <h2 id="race-condition">Race condition</h2>
-<p>Race condition 문제가 무시무시한 이유는 잘못된 concurrent operation을 수행하는 코드로 인해 정말 예상치도 못한 다른 코드에서 에러가 발생하거나, 의도치 않은 결과로 에러 없이 정상적으로 종료돼 문제가 발생한 사실 조차 알아차리기 힘들기 때문입니다. 게다가 Race condition으로 말미암은 의도치 않은 결과는 크리티컬한 취약점으로 귀결될 가능성이 높습니다. 보통 웹 백엔드 서버의 경우 쿠폰 중복 사용, 이중 출금 등 금전적인 손해를 유발하는 취약점이 있고, 네이티브한 프로그램에서는 경계 검사 우회, UAF와 같은 취약점으로 이어져 메모리 보호 기법을 우회하는 발판을 제공합니다.</p>
-<p>개인적으로 가장 골치 아픈 이유를 하나 꼽으라면, 그날의 운에 따라 Race condition이 발생할 수도 있고 안할 수도 있다는 점입이다. Race condition은 2개 이상의 스레드가 동시에 임계 영역에 접근할 때 발생하는 문제여서, 운이 좋게 각각의 스레드가 임계 영역을 차례대로 실행한다면 아무런 문제가 발생하지 않습니다. 스레드의 실행 순서와 선점(preemption)은 운영체제에서 스케쥴링하고, CPU 코어 수나 스레드 우선 순위, I/O 블록 여부에 따라 순서가 크게 달라지므로 그야말로 복불복입니다. (물론 모든게 알고리즘에 의해 결정되므로 엄밀히 따지면 복불복은 아니지만, 애플리케이션 레벨에서는 제멋대로 실행되는 것처럼 보입니다)</p>
-<p>Race condition을 악용하려는 공격자는 보통 단 시간내 최대한 많은 쓰레드가 임계 영역에 접근하도록 유도하여 고의적으로 문제를 유발시킵니다. 이런 까닭에 기능 테스크 코드만으로는 Race condition을 발견하기 힘들고, 실제 서비스가 프로덕션으로 배포되고 사용자가 충분히 많아진 시점에서 발견되곤 합니다.</p>
-<h2 id="mutual-exclusion">Mutual Exclusion</h2>
-<p>mutex를 통해 Race condition를 해결하는 예시는 다음과 같습니다. 아래 그림처럼 i-1, i, i+1, i+2 노드가 연결된 싱글 리스트에서 i 노드를 삭제하는 연산을 실행하면, i-1 노드의 next 주소를 i+1 주소로 변경합니다. 그런데 2개의 쓰레드가 각각 i 노드와 i+1 노드를 동시에 삭제한다면, i-1 노드의 next 주소는 i+1 주소로 변경되고, i 노드의 next 주소는 i+2 주소로 변경됩니다. 최종 리스트는 Race condition이 발생하여 의도한 바와 다르게 i+1 노드가 삭제되지 않은 것을 확인할 수 있습니다.</p>
+<p>여러 스레드가 공유 데이터에 접근하는 임계 영역을 제한하지 않을 때 발생하는 Race condition 문제의 예시는 다음과 같습니다. 아래 그림처럼 i-1, i, i+1, i+2 노드가 연결된 싱글 리스트에서 i 노드를 삭제하려면, i-1 노드의 next 주소를 i+1 주소로 변경하는 코드를 통해 i 노드를 제거합니다. 문제는 2개의 쓰레드가 각각 i 노드와 i+1 노드를 동시에 삭제를 시도하면, 예상과 달리 i+1 노드가 삭제되지 않는 결과가 나타납니다. 이런 결과가 발생한 이유는 첫 번째 스레드가 노드를 완전히 삭제하기 전에, 두 번째 스레드도 삭제를 시도하였고, 스레드 간의 어떠한 협의나 규약 없이 임계 영역의 삭제 코드를 실행해서 그렇습니다.</p>
 <p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Mutual_exclusion_example_with_linked_list.png/1600px-Mutual_exclusion_example_with_linked_list.png"
 	
 	
@@ -321,7 +369,11 @@
 	
 	
 ></p>
-<p>mutex를 사용하는 프로그램의 공유 자원 관리는 총 4가지 상태로 나누어 진행할 수 있는데, 임계 영역으로 진입을 시도하는 Trying 상태, 임계 영역에 진입한 Critical 상태, 임계 영역의 실행이 끝나 다른 스레드에게 차례를 넘겨주는 Exit 단계, 마지막으로 임계 영역 이외의 공유 자원에 접근하지 않는 Remainder 상태입니다. 노드를 삭제하는 코드 영역을 임계 영역으로 설정하고, 다음과 같은 과정을 통해 임계 영역에 하나의 스레드만 진입하게 할 수 있습니다.</p>
+<p>Race condition 문제가 무서운 이유는 잘못된 concurrent operation을 수행하는 코드로 인해 뜻밖의 코드에서 런타임 에러가 발생하거나, 오히려 런타임 에러 없이 정상적으로 종료돼 문제가 발생한 사실조차 알아차리기 힘들기 때문입니다. 게다가 Race condition은 크리티컬한 취약점으로 귀결될 가능성이 높습니다. 보통 웹 백엔드 서버의 경우 쿠폰 중복 사용, 이중 출금 등 금전적인 손해를 유발하는 취약점이 있고, 네이티브한 프로그램에서는 경계 검사 우회, UAF와 같은 취약점으로 이어져 메모리 보호 기법을 우회하는 발판을 제공합니다.</p>
+<p>개인적으로 골치 아프다고 생각했던 이유는 그날의 운에 따라 Race condition이 발생할 수도 있고 안할 수도 있다는 특징 때문입니다. Race condition은 2개 이상의 스레드가 동시에 임계 영역에 접근할 때 발생하는 문제여서, 운이 좋게 각각의 스레드가 임계 영역을 차례대로 실행한다면 아무런 문제가 발생하지 않습니다. 스레드의 실행 순서와 선점(preemption)은 운영체제에서 스케쥴링하고, CPU 코어 수나 스레드 우선 순위, I/O 블록 여부에 따라 순서가 크게 달라지므로 그야말로 복불복입니다. (물론 모든게 알고리즘에 의해 결정되므로 엄밀히 따지면 복불복은 아니지만, 애플리케이션 레벨에서는 제멋대로 실행되는 것처럼 보입니다)</p>
+<p>Race condition을 악용하려는 공격자는 보통 단 시간내 최대한 많은 쓰레드가 임계 영역에 접근하도록 유도하여 고의적으로 문제를 유발시킵니다. 이런 이유로 기능 테스크 코드만으로는 Race condition을 발견하기 힘들고, 실제 서비스가 프로덕션으로 배포되고 사용자가 충분히 많아진 시점에서 발견되곤 합니다.</p>
+<h2 id="mutual-exclusion">Mutual Exclusion</h2>
+<p>mutex의 공유 자원 관리는 총 4가지 상태로 나누어 진행할 수 있는데, 임계 영역으로 진입을 시도하는 Trying 상태, 임계 영역에 진입한 Critical 상태, 임계 영역의 실행이 끝나 다른 스레드에게 차례를 넘겨주는 Exit 단계, 마지막으로 임계 영역 이외의 공유 자원에 접근하지 않는 Remainder 상태입니다. 노드를 삭제하는 코드 영역을 임계 영역으로 설정하고, 다음과 같은 과정을 통해 임계 영역에 하나의 스레드만 진입하게 할 수 있습니다.</p>
 <ol>
 <li>스레드가 노드를 삭제하는 코드(임계 영역)에 도달하면 Remainder 상태에서 Trying 상태로 전환합니다.</li>
 <li>임계 영역에 진입한 스레드가 없으면 Critical 상태로 전환하고 있으면 대기합니다. 이때 임계 영역에 진입한 스레드가 있는지 확인하고, 진입하는 모든 작업 중간에 다른 스레드가 선점하지 못하도록 막아야 합니다.</li>
@@ -389,20 +441,20 @@
 </span><span class="lnt">14
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="cl">    <span class="k">while</span> <span class="kc">true</span> <span class="k">do</span><span class="o">:</span>
-</span></span><span class="line"><span class="cl">    	  <span class="c1">// state: Remainder
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="p">...</span> <span class="k">do</span> <span class="nx">remainder</span> <span class="nx">stuff</span> <span class="p">...</span>
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="cl"><span class="k">while</span> <span class="kc">true</span> <span class="k">do</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// state: Remainder
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="p">...</span> <span class="k">do</span> <span class="nx">remainder</span> <span class="nx">stuff</span> <span class="p">...</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">        <span class="c1">// state: Trying
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">while</span> <span class="nx">TestAndSet</span><span class="p">(</span><span class="nx">lock</span><span class="p">)</span> <span class="o">=</span> <span class="kc">true</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">          <span class="cm">/* spin */</span>
-</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// state: Trying
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">while</span> <span class="nx">TestAndSet</span><span class="p">(</span><span class="nx">lock</span><span class="p">)</span> <span class="o">=</span> <span class="kc">true</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="cm">/* spin */</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">        <span class="c1">// state: Critical
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="p">...</span> <span class="k">do</span> <span class="nx">critical</span> <span class="nx">section</span> <span class="nx">stuff</span> <span class="p">...</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// state: Critical
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="p">...</span> <span class="k">do</span> <span class="nx">critical</span> <span class="nx">section</span> <span class="nx">stuff</span> <span class="p">...</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">        <span class="c1">// state: Exiting
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="nx">reset</span><span class="p">(</span><span class="nx">lock</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// state: Exiting
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="nx">reset</span><span class="p">(</span><span class="nx">lock</span><span class="p">)</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>공유 메모리로 생성한 lock의 상태를 읽고, 변경하는 과정을 모두 atomic하게 수행하므로 임계 영역에 항상 하나의 스레드만 진입하는 것을 보장할 수 있습니다. 추가적으로 임계 영역에 진입하기 위해 루프를 돌며 차례를 기다리는 방식을 spinlock이라고 부릅니다. 다른 스레드로 context switch하고, 나중에 다시 context를 restore 하는 과정을 거치지 않고, 짧은 시간동안 차례를 기다려 오버헤드를 최소화합니다.</p>
@@ -441,7 +493,7 @@
 </span></span></span><span class="line"><span class="cl"><span class="cm">** global variables: P0_enter, P1_enter 
 </span></span></span><span class="line"><span class="cl"><span class="cm">*/</span>
 </span></span><span class="line"><span class="cl"><span class="nx">Process</span> <span class="mi">0</span><span class="o">:</span>
-</span></span><span class="line"><span class="cl">	<span class="cm">/* State: Trying */</span>
+</span></span><span class="line"><span class="cl">  <span class="cm">/* State: Trying */</span>
 </span></span><span class="line"><span class="cl">  <span class="k">while</span> <span class="nx">P1_enter</span> <span class="o">=</span> <span class="kc">true</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">     <span class="cm">/* spin */</span>
 </span></span><span class="line"><span class="cl">  <span class="p">}</span>
@@ -481,7 +533,7 @@
 </span></span></span><span class="line"><span class="cl"><span class="cm">** global variables: P0_will_enter, P1_will_enter 
 </span></span></span><span class="line"><span class="cl"><span class="cm">*/</span>
 </span></span><span class="line"><span class="cl"><span class="nx">Process</span> <span class="mi">0</span><span class="o">:</span>
-</span></span><span class="line"><span class="cl">	<span class="cm">/* State: Trying */</span>
+</span></span><span class="line"><span class="cl">  <span class="cm">/* State: Trying */</span>
 </span></span><span class="line"><span class="cl">  <span class="nx">P0_will_enter</span> <span class="err">←</span> <span class="kc">true</span>
 </span></span><span class="line"><span class="cl">  <span class="c1">// [A]
 </span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">while</span> <span class="nx">P1_will_enter</span> <span class="o">=</span> <span class="kc">true</span> <span class="p">{</span>
@@ -524,12 +576,12 @@
 </span></span></span><span class="line"><span class="cl"><span class="cm">** global variables: P0_will_enter, P1_will_enter, priority
 </span></span></span><span class="line"><span class="cl"><span class="cm">*/</span>
 </span></span><span class="line"><span class="cl"><span class="nx">Process</span> <span class="mi">0</span><span class="o">:</span>
-</span></span><span class="line"><span class="cl">	<span class="cm">/* State: Trying */</span>
+</span></span><span class="line"><span class="cl">  <span class="cm">/* State: Trying */</span>
 </span></span><span class="line"><span class="cl">  <span class="nx">P0_will_enter</span> <span class="err">←</span> <span class="kc">true</span>
 </span></span><span class="line"><span class="cl">  <span class="k">while</span> <span class="nx">P1_will_enter</span> <span class="o">=</span> <span class="kc">true</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">    <span class="nx">P0_will_enter</span> <span class="err">←</span> <span class="kc">false</span>
-</span></span><span class="line"><span class="cl">  	<span class="k">while</span> <span class="nx">priority</span> <span class="o">!=</span> <span class="nx">P0</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">    	<span class="cm">/* spin */</span>
+</span></span><span class="line"><span class="cl">    <span class="k">while</span> <span class="nx">priority</span> <span class="o">!=</span> <span class="nx">P0</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="cm">/* spin */</span>
 </span></span><span class="line"><span class="cl">    <span class="p">}</span>
 </span></span><span class="line"><span class="cl">    <span class="nx">P0_will_enter</span> <span class="err">←</span> <span class="kc">true</span>
 </span></span><span class="line"><span class="cl">  <span class="p">}</span>
@@ -574,7 +626,7 @@
 </span></span></span><span class="line"><span class="cl"><span class="cm">** global variables: P0_will_enter, P1_will_enter, priority
 </span></span></span><span class="line"><span class="cl"><span class="cm">*/</span>
 </span></span><span class="line"><span class="cl"><span class="nx">Process</span> <span class="mi">0</span><span class="o">:</span>
-</span></span><span class="line"><span class="cl">	<span class="cm">/* State: Trying */</span>
+</span></span><span class="line"><span class="cl">  <span class="cm">/* State: Trying */</span>
 </span></span><span class="line"><span class="cl">  <span class="nx">P0_will_enter</span> <span class="err">←</span> <span class="kc">true</span>
 </span></span><span class="line"><span class="cl">  <span class="k">while</span> <span class="nx">P1_will_enter</span> <span class="o">=</span> <span class="kc">true</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nx">priority</span> <span class="o">!=</span> <span class="nx">P0</span> <span class="p">{</span>
@@ -704,7 +756,7 @@
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cm">/* Mutex version 2
 </span></span></span><span class="line"><span class="cl"><span class="cm">   global variables:  Entering[1..NUM_THREADS] = {false};
-</span></span></span><span class="line"><span class="cl"><span class="cm">   									  Number[1..NUM_THREADS] = {0};
+</span></span></span><span class="line"><span class="cl"><span class="cm">                      Number[1..NUM_THREADS] = {0};
 </span></span></span><span class="line"><span class="cl"><span class="cm">*/</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="n">lock</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="p">)</span> <span class="p">{</span>
@@ -844,7 +896,7 @@
     
     <section class="powerby">
         Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
-        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.14.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.16.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
     </section>
 </footer>
 
@@ -928,50 +980,6 @@
             >
 
             </main>
-    <aside class="sidebar right-sidebar sticky">
-        
-            
-                
-    <section class="widget archives">
-        <div class="widget-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <line x1="5" y1="9" x2="19" y2="9" />
-  <line x1="5" y1="15" x2="19" y2="15" />
-  <line x1="11" y1="4" x2="7" y2="20" />
-  <line x1="17" y1="4" x2="13" y2="20" />
-</svg>
-
-
-
-        </div>
-        <h2 class="widget-title section-title">Table of contents</h2>
-        
-        <div class="widget--toc">
-            <nav id="TableOfContents">
-  <ol>
-    <li><a href="#race-condition">Race condition</a></li>
-    <li><a href="#mutual-exclusion">Mutual Exclusion</a></li>
-    <li><a href="#deadlock-freedom">Deadlock Freedom</a></li>
-    <li><a href="#lockout-freedom">Lockout Freedom</a></li>
-    <li><a href="#hardware-implemenation">Hardware implemenation</a></li>
-    <li><a href="#software-implemenation">Software implemenation</a>
-      <ol>
-        <li><a href="#dekkers-algorithm">Dekker&rsquo;s algorithm</a></li>
-        <li><a href="#lamports-bakery-algorithm">Lamport&rsquo;s bakery algorithm</a></li>
-      </ol>
-    </li>
-    <li><a href="#references">References</a></li>
-  </ol>
-</nav>
-        </div>
-    </section>
-
-            
-        
-    </aside>
-
-
         </div>
         <script 
                 src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"

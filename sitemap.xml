@@ -5,16 +5,37 @@
     <loc>https://truealarm.github.io/</loc>
     <lastmod>2022-12-21T02:05:26+09:00</lastmod>
   </url><url>
+    <loc>https://truealarm.github.io/categories/</loc>
+    <lastmod>2022-12-21T02:05:26+09:00</lastmod>
+  </url><url>
+    <loc>https://truealarm.github.io/tags/cors/</loc>
+    <lastmod>2022-12-21T02:05:26+09:00</lastmod>
+  </url><url>
+    <loc>https://truealarm.github.io/tags/csrf/</loc>
+    <lastmod>2022-12-21T02:05:26+09:00</lastmod>
+  </url><url>
+    <loc>https://truealarm.github.io/tags/jsonp/</loc>
+    <lastmod>2022-12-21T02:05:26+09:00</lastmod>
+  </url><url>
     <loc>https://truealarm.github.io/p/misunderstood-of-same-origin-policy/</loc>
+    <lastmod>2022-12-21T02:05:26+09:00</lastmod>
+  </url><url>
+    <loc>https://truealarm.github.io/tags/origin/</loc>
     <lastmod>2022-12-21T02:05:26+09:00</lastmod>
   </url><url>
     <loc>https://truealarm.github.io/post/</loc>
     <lastmod>2022-12-21T02:05:26+09:00</lastmod>
   </url><url>
-    <loc>https://truealarm.github.io/tags/atomic-operation/</loc>
-    <lastmod>2022-11-20T03:54:03+09:00</lastmod>
+    <loc>https://truealarm.github.io/tags/same-origin-policy/</loc>
+    <lastmod>2022-12-21T02:05:26+09:00</lastmod>
   </url><url>
-    <loc>https://truealarm.github.io/categories/</loc>
+    <loc>https://truealarm.github.io/tags/</loc>
+    <lastmod>2022-12-21T02:05:26+09:00</lastmod>
+  </url><url>
+    <loc>https://truealarm.github.io/categories/web/</loc>
+    <lastmod>2022-12-21T02:05:26+09:00</lastmod>
+  </url><url>
+    <loc>https://truealarm.github.io/tags/atomic-operation/</loc>
     <lastmod>2022-11-20T03:54:03+09:00</lastmod>
   </url><url>
     <loc>https://truealarm.github.io/categories/concurrent-programming/</loc>
@@ -27,9 +48,6 @@
     <lastmod>2022-11-20T03:54:03+09:00</lastmod>
   </url><url>
     <loc>https://truealarm.github.io/tags/race-condition/</loc>
-    <lastmod>2022-11-20T03:54:03+09:00</lastmod>
-  </url><url>
-    <loc>https://truealarm.github.io/tags/</loc>
     <lastmod>2022-11-20T03:54:03+09:00</lastmod>
   </url><url>
     <loc>https://truealarm.github.io/archives/</loc>

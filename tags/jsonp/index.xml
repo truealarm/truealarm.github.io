@@ -114,7 +114,7 @@
 &lt;/ul&gt;
 &lt;/blockquote&gt;
 &lt;blockquote&gt;
-&lt;h3 id=&#34;-note&#34;&gt;📝 &lt;strong&gt;Note&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;📝 &lt;strong&gt;Note&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;Origin 헤더 말고 스크립트에서 덮어씌울 수 없는 헤더 목록은 &lt;a class=&#34;link&#34; href=&#34;https://developer.mozilla.org/en-US/docs/Glossary/Forbidden_header_name&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;Forbidden header name&lt;/a&gt;에서 확인할 수 있다.&lt;/p&gt;
 &lt;/blockquote&gt;

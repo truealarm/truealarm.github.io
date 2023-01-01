@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>Return Value Optimization on True Alarm</title>
+        <link>https://truealarm.github.io/tags/return-value-optimization/</link>
+        <description>Recent content in Return Value Optimization on True Alarm</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>en-us</language>
+        <lastBuildDate>Sat, 31 Dec 2022 19:46:30 +0900</lastBuildDate><atom:link href="https://truealarm.github.io/tags/return-value-optimization/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Guaranteed copy elision. What&#39;s difference?</title>
+        <link>https://truealarm.github.io/p/guaranteed-copy-elision.-whats-difference/</link>
+        <pubDate>Sat, 31 Dec 2022 19:46:30 +0900</pubDate>
+        
+        <guid>https://truealarm.github.io/p/guaranteed-copy-elision.-whats-difference/</guid>
+        <description>&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://en.wikipedia.org/wiki/Copy_elision&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Copy elision&lt;/a&gt;은 불필요한 객체의 복사 과정을 제거하는 컴파일러 최적화 기법이다. 예전부터 C++ 컴파일러에도 Copy elision 기법이 적용되어 있었고, 우리는 알게 모르게 최적화의 혜택을 누리고 있었다. 그러다 C++17부터 Guaranteed copy elision &lt;a class=&#34;link&#34; href=&#34;https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2015/p0135r0.html&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;제안&lt;/a&gt;이 받아들여지면서 Copy elision 기법에 변화가 생겼다. 이름만 보면 한층 더 강력한 최적화 기법을 적용한 것 같지만, 임시 객체(temporary)와 prvalue에 대한 명세를 살짝 바꿨을 뿐 어떠한 최적화 기법이 추가되지는 않았다. 해당 포스트는 바뀐 명세로 인해 생긴 변화와 이점에 대해 얘기한다.&lt;/p&gt;
+&lt;h2 id=&#34;copy-elision&#34;&gt;Copy elision&lt;/h2&gt;
+&lt;p&gt;Copy elision이 어떤 최적화 기법인지는 위키피디아에 잘 나와있지만, 기본적인 내용부터 확실히 알고 넘어가자.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-c++&#34; data-lang=&#34;c++&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;cp&#34;&gt;#include&lt;/span&gt; &lt;span class=&#34;cpf&#34;&gt;&amp;lt;iostream&amp;gt;&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;cp&#34;&gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;n&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;C&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;k&#34;&gt;explicit&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;C&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;n&#34;&gt;C&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;const&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;C&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;++&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;n&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;  &lt;span class=&#34;c1&#34;&gt;// the copy constructor has a observable side effect
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;};&lt;/span&gt;                      &lt;span class=&#34;c1&#34;&gt;// it modifies an object with static storage duration
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;main&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;n&#34;&gt;C&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;c1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;42&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;      &lt;span class=&#34;c1&#34;&gt;// direct-initialization, calls C::C(int)
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;  &lt;span class=&#34;n&#34;&gt;C&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;c2&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;42&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;};&lt;/span&gt;      &lt;span class=&#34;c1&#34;&gt;// direct-list-initialization, calls C::C(int)
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;  &lt;span class=&#34;n&#34;&gt;C&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;c3&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;C&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;42&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;  &lt;span class=&#34;c1&#34;&gt;// copy-initialization, calls C::C(const C&amp;amp;)
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;  &lt;span class=&#34;n&#34;&gt;C&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;c4&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;C&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;42&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;};&lt;/span&gt;  &lt;span class=&#34;c1&#34;&gt;// copy-initialization, calls C::C(const C&amp;amp;)
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;n&#34;&gt;std&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;::&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;cout&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;n&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;std&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;::&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;endl&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;  &lt;span class=&#34;c1&#34;&gt;// prints 0 if the copy was elided, 2 otherwise
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;code&gt;c1&lt;/code&gt;는 생성자에 직접 인자를 전달해 초기화하는 direct-initialization, &lt;code&gt;c2&lt;/code&gt;는 중괄호(brace)를 사용해 객체를 초기화한 direct-list-initialization라고 부르며 c++11부터 추가된 기능이다. (c++11 이전은 괄호와 동일하게 처리됨) &lt;code&gt;c3&lt;/code&gt;, &lt;code&gt;c4&lt;/code&gt;는 각각 direct-initialization, direct-list-initialization으로 초기화한 임시 객체를 복사해 초기화하는 copy-initialization이다.&lt;/p&gt;
+&lt;p&gt;copy-initialization로 초기화하는 과정은 생성한 임시 객체를 그대로 사용하지 않고, 복사/이동 생성자를 통해 임시 객체를 복사/이동하므로 direct-initialization보다 더 많은 연산이 요구된다.&lt;/p&gt;
+&lt;p&gt;임시 객체는 어차피 초기화할 때만 사용되므로, 불필요한 복사/이동 생성자를 생략하고 객체를 직접 초기화한 것 처럼 처리하는게 Copy elision이다. 하지만 예제의 구조체처럼 복사 생성자가 observable한 side effect(&lt;code&gt;n&lt;/code&gt;을 변경하는 코드)가 있는 경우, 컴파일러 정책에 따라 적용 유무가 달라질 수 있다. c++17의 경우 Mandatory elision of copy/move operations라고 해서 side effect가 있더라도 prvaule로 초기화하는 식에는 무조건 Copy elision을 적용한다.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Mandatory elision of copy/move operations&lt;/strong&gt; (since c++17)&lt;/p&gt;
+&lt;p&gt;Under the following circumstances, the compilers are required to omit the copy and move construction of class objects, even if the copy/move constructor and the destructor have observable side-effects. The objects are constructed directly into the storage where they would otherwise be copied/moved to. The copy/move constructors need not be present or accessible:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;In the initialization of an object, when the initializer expression is a &lt;a class=&#34;link&#34; href=&#34;https://en.cppreference.com/w/cpp/language/value_category&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;prvalue&lt;/a&gt; of the same class type (ignoring &lt;a class=&#34;link&#34; href=&#34;https://en.cppreference.com/w/cpp/language/cv&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;cv-qualification&lt;/a&gt;) as the variable type:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;h3 id=&#34;return-value-optimization&#34;&gt;Return Value Optimization&lt;/h3&gt;
+&lt;p&gt;함수에서 생성한 임시 객체를 값으로 반환할 때, 임시 객체의 scope는 함수 내부이므로 반환 이후 소멸된다. 소멸되기 전에 반환할 객체를 생성하고 임시 객체를 복사하는 과정이 필요하다. 하지만 임시 객체는 다른 객체를 초기화하는 용도로만 사용되므로, 복사 과정을 생략하고 그대로 임시 객체를 반환하는 최적화 기법을 Return Value Optimization(RVO)라고 부르며 Copy elision의 한 종류이다.&lt;/p&gt;
+&lt;p&gt;반환식에 바로 객체의 초기화식이 와서 임시 객체의 이름이 없는 경우 Unnamed RVO (URVO), 임시 객체를 생성하는 식과 반환식이 분리되어 이름이 있는 경우 Named RVO (NRVO)라고 분류된다. NRVO의 경우 두 개의 식 사이에 다른 대입 연산이 올 수 있는게 특징이고, c++17 이후에도 Non-mandatory한 copy elision으로 간주되어 컴파일러 정책에 따라 적용 유무가 달라진다. (URVO는 c++17부터 필수적으로 적용)&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-c++&#34; data-lang=&#34;c++&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;cp&#34;&gt;#include&lt;/span&gt; &lt;span class=&#34;cpf&#34;&gt;&amp;lt;iostream&amp;gt;&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;cp&#34;&gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;C&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;n&#34;&gt;C&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;const&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;C&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;std&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;::&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;cout&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;#34;A copy was made.&lt;/span&gt;&lt;span class=&#34;se&#34;&gt;\n&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;};&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;C&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;f&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;C&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;();&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;// copy-initialization, calls C::C(const C&amp;amp;) 
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;main&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;n&#34;&gt;std&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;::&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;cout&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;#34;Hello World&lt;/span&gt;&lt;span class=&#34;se&#34;&gt;\n&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;n&#34;&gt;C&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;obj&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;f&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;();&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;// copy-initialization, calls C::C(const C&amp;amp;)
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;위의 예제코드의 &lt;code&gt;f&lt;/code&gt; 함수가 전형적인 URVO를 적용할 수 있는 케이스이다. 이후 반환된 객체를 초기화할 때 역시 copy-initialization이 필요하지만, Copy elision 기법에 의해 생략될 수 있다. 따라서 &amp;ldquo;Hello world&amp;rdquo; 문자열이 최대 2번, 최소 0번 출력될 수 있고, c++17 이후라면 출력되지 않을 것이다.&lt;/p&gt;
+&lt;h2 id=&#34;the-problem&#34;&gt;The problem&lt;/h2&gt;
+&lt;p&gt;c++17 이전 Copy elision 최적화 기법에 관해 컴파일러가 필수적으로 보장해야 할 명세가 없었고, 어차피 생략되는 복사/이동 생성자의 유무를 신경쓰지 않았기에 예상치 못한 &lt;a class=&#34;link&#34; href=&#34;https://groups.google.com/a/isocpp.org/forum/#!topic/std-proposals/LEzTGnc4FZo&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;문제&lt;/a&gt;가 발견된다.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-c++&#34; data-lang=&#34;c++&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;NonMoveable&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;n&#34;&gt;NonMoveable&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;default&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;n&#34;&gt;NonMoveable&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;NonMoveable&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;delete&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;};&lt;/span&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;NonMoveable&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;make&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{};&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;// compiles in c++11
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;RVO를 지원하는 c++11 컴파일러에서 위 예제 코드를 컴파일하면 에러가 발생한다. &lt;code&gt;make&lt;/code&gt; 함수에서 이동 생성자가 지워진 &lt;code&gt;NonMoveable&lt;/code&gt; 구조체로 생성한 임시 객체를 반환할 객체로 이동을 시도하기 때문이다. 실제로 RVO가 적용되어 복사/이동 생성자가 사용되지 않지만, 생성자가 없다는 이유로 컴파일을 거부하는 모순적인 상황이 발생한다. 이는 c++11으로는 non-moveable 타입에 대한 factory 함수를 만들 수 없는 것을 의미한다.&lt;/p&gt;
+&lt;p&gt;게다가, non-moveable 타입은 AAA(Always Almost Auto) 스타일로 &lt;a class=&#34;link&#34; href=&#34;https://herbsutter.com/2013/08/12/gotw-94-solution-aaa-style-almost-always-auto/#:~:text=and%20most%20readable%3F-,6.%20Are%20there%20any%20cases%20where%20it%20is%20not%20possible%20to%20use%20the%20style%20in%20%234%20to%20declare%20all%20local%20variables%3F,-There%20is%20one&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;초기화할 수 없게 된다&lt;/a&gt;. (e.g. amotic, lock_guard)&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-c++&#34; data-lang=&#34;c++&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;k&#34;&gt;auto&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;x&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;NonMoveable&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;{};&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;// compiles in c++11
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;이런 제한 사항은 프로그래머에게 동적 할당된 주소를 반환하는 패턴을 사용하거나, 단순히 에러가 발생하지 않게 하기 위해 흑마법을 사용하게 하는 결과를 초래한다. 좋은 언어라면 프로그래머가 나쁜 코드를 작성하지 않고, 좋은 코드를 짤 수 있도록 설계되어 있다. 다행히 c++은 충분히 좋은 언어이므로, c++17에서는 이런 문제가 발생하지 않는다. (Richard Smith가 제안한 Guaranteed copy elision라는 &lt;a class=&#34;link&#34; href=&#34;https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2015/p0135r0.html&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;제안&lt;/a&gt;을 통해 문제를 해결함)&lt;/p&gt;
+&lt;h2 id=&#34;guaranteed-copy-elision&#34;&gt;Guaranteed copy elision&lt;/h2&gt;
+&lt;p&gt;Guaranteed copy elision은 기존 c++이 prvalue와 glvalue를 어떻게 정의하고 있었고, pvalue가 표현식으로 평가될 때 어떤 일이 벌어지고 있었는 지에 중점을 맞춘다. 아래는 c++17 이전에 정의하고 있던 value categories에 대한 설명이다.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;An &lt;em&gt;lvalue&lt;/em&gt; (so called, historically, because lvalues could appear on the left-hand side of an assignment expression) designates a function or an object. [ Example: If E is an expression of pointer type, then *E is an lvalue expression referring to the object or function to which E points. As another example, the result of calling a function whose return type is an lvalue reference is an lvalue. - end example ]&lt;/li&gt;
+&lt;li&gt;An &lt;em&gt;xvalue&lt;/em&gt; (an &amp;ldquo;eXpiring&amp;rdquo; value) also refers to an object, usually near the end of its lifetime (so that its resources may be moved, for example). Certain kinds of expressions involving rvalue references (8.3.2) yield xvalues. [ Example: The result of calling a function whose return type is an rvalue reference to an object type is an xvalue (5.2.2). - end example ]&lt;/li&gt;
+&lt;li&gt;A &lt;em&gt;glvalue&lt;/em&gt; (&amp;ldquo;generalized&amp;rdquo; lvalue) is an lvalue or an xvalue.&lt;/li&gt;
+&lt;li&gt;An &lt;em&gt;rvalue&lt;/em&gt; (so called, historically, because rvalues could appear on the right-hand side of an assignment expression) is an xvalue, a temporary object (12.2) or subobject thereof, or a value that is not associated with an object.&lt;/li&gt;
+&lt;li&gt;A &lt;em&gt;prvalue&lt;/em&gt; (&amp;ldquo;pure&amp;rdquo; rvalue) is an rvalue that is not an xvalue. [ Example: The result of calling a function whose return type is not a reference is a prvalue. The value of a literal such as 12, 7.3e5, or true is also a prvalue. - end example ]&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;이 설명만 보면 &lt;code&gt;NonMoveable{}&lt;/code&gt; 처럼 임시 객체를 초기화하는 식은 prvalue로 분류하고, &lt;code&gt;NonMoveable{}.x&lt;/code&gt;은 왜 glvalue로 분류할 수 있었는 지 알기 어렵다.&lt;/p&gt;
+&lt;p&gt;Richard Smith는 prvalue와 glvaule 간 혼란을 줄이기 위해 prvalue는 객체를 초기화하는 식, glvalue는 identity를 부여하는 식으로 의미를 구체화했다. 그래서 객체를 초기화하는 식(&lt;code&gt;NonMoveable{}&lt;/code&gt;)은 identity를 갖지 않으므로 prvalue로 분류할 수 있고, identity가 부여되는 식(&lt;code&gt;NonMoveable{}.x&lt;/code&gt;)은 glvalue로 구분할 수 있다. 이로 인해 c++17 부터는 &lt;a class=&#34;link&#34; href=&#34;https://timsong-cpp.github.io/cppwp/n4659/basic.lval&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;value categories에 대한 정의&lt;/a&gt;가 바뀌었지만, 기존 값 분류와 어긋나지는 않는다. (조금 더 자세한 기준이 생긴 것으로 봄)&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;A glvalue [(generalized lvalue)] is an expression whose evaluation determines the identity of an object, bit-field, or function.&lt;/li&gt;
+&lt;li&gt;A prvalue is an expression whose evaluation initializes an object or a bit-field, or computes the value of an operand of an operator, as specified by the context in which it appears.&lt;/li&gt;
+&lt;li&gt;An xvalue is a glvalue that denotes an object or bit-field whose resources can be reused (usually because it is near the end of its lifetime).&lt;/li&gt;
+&lt;li&gt;An lvalue is a glvalue that is not an xvalue.&lt;/li&gt;
+&lt;li&gt;An rvalue is a prvalue or an xvalue.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;추가적으로 prvalue에 identity가 부여되어 glvalue로 타입 변경이 일어나는 행위를 Temporary materialization이라고 정의하며, c++17 표준에 명시되어 있다. 이 정의가 중요한 이유는 임시 객체가 실제로 필요하기 전까진, 다시 말해 identity가 부여되어 materialization되기 전까지 임시 객체를 생성하지 않아도 되기 때문이다.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Temporary materialization&lt;/strong&gt; (since c++17)&lt;/p&gt;
+&lt;p&gt;A &lt;a class=&#34;link&#34; href=&#34;https://en.cppreference.com/w/cpp/language/value_category#prvalue&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;prvalue&lt;/a&gt; of any complete type &lt;code&gt;T&lt;/code&gt; can be converted to an xvalue of the same type &lt;code&gt;T&lt;/code&gt;. This conversion initializes a &lt;a class=&#34;link&#34; href=&#34;https://en.cppreference.com/w/cpp/language/lifetime#Temporary_object_lifetime&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;temporary object&lt;/a&gt; of type T from the prvalue by evaluating the prvalue with the temporary object as its result object, and produces an xvalue denoting the temporary object. If &lt;code&gt;T&lt;/code&gt; is a class or array of class type, it must have an accessible and non-deleted destructor.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;객체의 생명주기를 명시하고있는 &lt;a class=&#34;link&#34; href=&#34;https://en.cppreference.com/w/cpp/language/lifetime&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Lifetime&lt;/a&gt; 문서에도 c++17에서 임시 객체는 prvalue가 나타나는 식에서 생성되는게 아니라, materialized될 때 생성한다고 나와있다.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Temporary objects are created when a prvalue is &lt;a class=&#34;link&#34; href=&#34;https://en.cppreference.com/w/cpp/language/implicit_conversion#Temporary_materialization&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;materialized&lt;/a&gt; so that it can be used as a glvalue, which occurs (since C++17) in the following situations:&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;그래서 c++17 이전 관점으로 아래 코드를 본다면, &amp;ldquo;임시 객체를 생성하고 임시 객체를 x로 이동하지만 Copy elision으로 이동 과정을 생략함&amp;quot;으로 해석하고, c++17 이후 관점으로는 &amp;ldquo;x를 초기화하는 식&amp;quot;으로 해석할 수 있다.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-c++&#34; data-lang=&#34;c++&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;X&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{};&lt;/span&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;k&#34;&gt;auto&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;x&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;X&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;{};&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;임시 객체가 생성되지 않는다면, 복사나 이동을 생각할 필요 자체가 없어진다. 결국 Copy elision과 복사/이동 생성자 사이의 의존성이 모두 사라져, 이전에 발생했던 모순과 같은 문제들이 전부 해결된다.&lt;/p&gt;
+&lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;Guaranteed copy elision는 copy elision를 보완하는 내용이 아닌, 애매하던 기존 c++ value categories의 정의를 좀 더 구체화하고, 임시 객체가 실제 필요할 때 생성하는 방식으로, c++의 기능을 개선함과 동시에 문제를 해결하였다. 이를 통해 c++17에서 임시 객체를 어떻게 바라볼 지, value categories가 갖는 의미에 대해 자세히 알 수 있었다.&lt;/p&gt;
+&lt;h2 id=&#34;references&#34;&gt;References&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2015/p0135r0.html&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2015/p0135r0.html&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://devblogs.microsoft.com/cppblog/guaranteed-copy-elision-does-not-elide-copies/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://devblogs.microsoft.com/cppblog/guaranteed-copy-elision-does-not-elide-copies/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://en.cppreference.com/w/cpp/language/copy_elision&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://en.cppreference.com/w/cpp/language/copy_elision&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://groups.google.com/a/isocpp.org/forum/#!topic/std-proposals/LEzTGnc4FZo&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://groups.google.com/a/isocpp.org/forum/#!topic/std-proposals/LEzTGnc4FZo&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+        </item>
+        
+    </channel>
+</rss>

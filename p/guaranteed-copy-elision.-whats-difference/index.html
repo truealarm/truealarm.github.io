@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Copy elision은 불필요한 객체의 복사 과정을 제거하는 컴파일러 최적화 기법이다. 예전부터 C&#43;&#43; 컴파일러에도 Copy elision 기법이 적용되어 있었고, 우리는 알게 모르게 최적화의 혜택을 누리고 있었다. 그러다 C&#43;&#43;17부터 Guaranteed copy elision 제안이 받아들여지면서 Copy elision 기법에 변화가 생겼다. 이름만 보면 한층 더 강력한 최적화 기법을 적용한 것 같지만, 임시 객체(temporary)와 prvalue에 대한 명세를 살짝 바꿨을 뿐 어떠한 최적화 기법이 추가되지는 않았다. 해당 포스트는 바뀐 명세로 인해 생긴 변화와 이점에 대해 얘기한다.'>
+<title>Guaranteed copy elision. What&#39;s difference?</title>
+
+<link rel='canonical' href='https://truealarm.github.io/p/guaranteed-copy-elision.-whats-difference/'>
+
+<link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='Guaranteed copy elision. What&#39;s difference?'>
+<meta property='og:description' content='Copy elision은 불필요한 객체의 복사 과정을 제거하는 컴파일러 최적화 기법이다. 예전부터 C&#43;&#43; 컴파일러에도 Copy elision 기법이 적용되어 있었고, 우리는 알게 모르게 최적화의 혜택을 누리고 있었다. 그러다 C&#43;&#43;17부터 Guaranteed copy elision 제안이 받아들여지면서 Copy elision 기법에 변화가 생겼다. 이름만 보면 한층 더 강력한 최적화 기법을 적용한 것 같지만, 임시 객체(temporary)와 prvalue에 대한 명세를 살짝 바꿨을 뿐 어떠한 최적화 기법이 추가되지는 않았다. 해당 포스트는 바뀐 명세로 인해 생긴 변화와 이점에 대해 얘기한다.'>
+<meta property='og:url' content='https://truealarm.github.io/p/guaranteed-copy-elision.-whats-difference/'>
+<meta property='og:site_name' content='True Alarm'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='C&#43;&#43;17' /><meta property='article:tag' content='Copy elision' /><meta property='article:tag' content='Return Value Optimization' /><meta property='article:tag' content='Temporary materialization' /><meta property='article:published_time' content='2022-12-31T19:46:30&#43;09:00'/><meta property='article:modified_time' content='2022-12-31T19:46:30&#43;09:00'/>
+<meta name="twitter:title" content="Guaranteed copy elision. What&#39;s difference?">
+<meta name="twitter:description" content="Copy elision은 불필요한 객체의 복사 과정을 제거하는 컴파일러 최적화 기법이다. 예전부터 C&#43;&#43; 컴파일러에도 Copy elision 기법이 적용되어 있었고, 우리는 알게 모르게 최적화의 혜택을 누리고 있었다. 그러다 C&#43;&#43;17부터 Guaranteed copy elision 제안이 받아들여지면서 Copy elision 기법에 변화가 생겼다. 이름만 보면 한층 더 강력한 최적화 기법을 적용한 것 같지만, 임시 객체(temporary)와 prvalue에 대한 명세를 살짝 바꿨을 뿐 어떠한 최적화 기법이 추가되지는 않았다. 해당 포스트는 바뀐 명세로 인해 생긴 변화와 이점에 대해 얘기한다.">
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/flappy1000_hu1c66c531ae5bca477a9190a15e605814_6192_300x0_resize_box_3.png" width="300"
+                            height="273" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">True Alarm</a></h1>
+            <h2 class="site-description">I&#39;m sorry but don&#39;t wanna code</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/truealarm'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://twitter.com/404'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>Archives</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>Search</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/links/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>Links</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>Dark Mode</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">Table of contents</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#copy-elision">Copy elision</a>
+      <ol>
+        <li><a href="#return-value-optimization">Return Value Optimization</a></li>
+      </ol>
+    </li>
+    <li><a href="#the-problem">The problem</a></li>
+    <li><a href="#guaranteed-copy-elision">Guaranteed copy elision</a></li>
+    <li><a href="#conclusion">Conclusion</a></li>
+    <li><a href="#references">References</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/c&#43;&#43;/" >
+                C&#43;&#43;
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/guaranteed-copy-elision.-whats-difference/">Guaranteed copy elision. What&#39;s difference?</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Dec 31, 2022</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    7 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p><a class="link" href="https://en.wikipedia.org/wiki/Copy_elision"  target="_blank" rel="noopener"
+    >Copy elision</a>은 불필요한 객체의 복사 과정을 제거하는 컴파일러 최적화 기법이다. 예전부터 C++ 컴파일러에도 Copy elision 기법이 적용되어 있었고, 우리는 알게 모르게 최적화의 혜택을 누리고 있었다. 그러다 C++17부터 Guaranteed copy elision <a class="link" href="https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2015/p0135r0.html"  target="_blank" rel="noopener"
+    >제안</a>이 받아들여지면서 Copy elision 기법에 변화가 생겼다. 이름만 보면 한층 더 강력한 최적화 기법을 적용한 것 같지만, 임시 객체(temporary)와 prvalue에 대한 명세를 살짝 바꿨을 뿐 어떠한 최적화 기법이 추가되지는 않았다. 해당 포스트는 바뀐 명세로 인해 생긴 변화와 이점에 대해 얘기한다.</p>
+<h2 id="copy-elision">Copy elision</h2>
+<p>Copy elision이 어떤 최적화 기법인지는 위키피디아에 잘 나와있지만, 기본적인 내용부터 확실히 알고 넘어가자.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">struct</span> <span class="nc">C</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">explicit</span> <span class="nf">C</span><span class="p">(</span><span class="kt">int</span><span class="p">)</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl">  <span class="n">C</span><span class="p">(</span><span class="k">const</span> <span class="n">C</span><span class="o">&amp;</span><span class="p">)</span> <span class="p">{</span> <span class="o">++</span><span class="n">n</span><span class="p">;</span> <span class="p">}</span>  <span class="c1">// the copy constructor has a observable side effect
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">};</span>                      <span class="c1">// it modifies an object with static storage duration
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">C</span> <span class="n">c1</span><span class="p">(</span><span class="mi">42</span><span class="p">);</span>      <span class="c1">// direct-initialization, calls C::C(int)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">C</span> <span class="n">c2</span><span class="p">{</span><span class="mi">42</span><span class="p">};</span>      <span class="c1">// direct-list-initialization, calls C::C(int)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">C</span> <span class="n">c3</span> <span class="o">=</span> <span class="n">C</span><span class="p">(</span><span class="mi">42</span><span class="p">);</span>  <span class="c1">// copy-initialization, calls C::C(const C&amp;)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">C</span> <span class="n">c4</span> <span class="o">=</span> <span class="n">C</span><span class="p">{</span><span class="mi">42</span><span class="p">};</span>  <span class="c1">// copy-initialization, calls C::C(const C&amp;)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">  <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">n</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>  <span class="c1">// prints 0 if the copy was elided, 2 otherwise
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>c1</code>는 생성자에 직접 인자를 전달해 초기화하는 direct-initialization, <code>c2</code>는 중괄호(brace)를 사용해 객체를 초기화한 direct-list-initialization라고 부르며 c++11부터 추가된 기능이다. (c++11 이전은 괄호와 동일하게 처리됨) <code>c3</code>, <code>c4</code>는 각각 direct-initialization, direct-list-initialization으로 초기화한 임시 객체를 복사해 초기화하는 copy-initialization이다.</p>
+<p>copy-initialization로 초기화하는 과정은 생성한 임시 객체를 그대로 사용하지 않고, 복사/이동 생성자를 통해 임시 객체를 복사/이동하므로 direct-initialization보다 더 많은 연산이 요구된다.</p>
+<p>임시 객체는 어차피 초기화할 때만 사용되므로, 불필요한 복사/이동 생성자를 생략하고 객체를 직접 초기화한 것 처럼 처리하는게 Copy elision이다. 하지만 예제의 구조체처럼 복사 생성자가 observable한 side effect(<code>n</code>을 변경하는 코드)가 있는 경우, 컴파일러 정책에 따라 적용 유무가 달라질 수 있다. c++17의 경우 Mandatory elision of copy/move operations라고 해서 side effect가 있더라도 prvaule로 초기화하는 식에는 무조건 Copy elision을 적용한다.</p>
+<blockquote>
+<p><strong>Mandatory elision of copy/move operations</strong> (since c++17)</p>
+<p>Under the following circumstances, the compilers are required to omit the copy and move construction of class objects, even if the copy/move constructor and the destructor have observable side-effects. The objects are constructed directly into the storage where they would otherwise be copied/moved to. The copy/move constructors need not be present or accessible:</p>
+<ul>
+<li>In the initialization of an object, when the initializer expression is a <a class="link" href="https://en.cppreference.com/w/cpp/language/value_category"  target="_blank" rel="noopener"
+    >prvalue</a> of the same class type (ignoring <a class="link" href="https://en.cppreference.com/w/cpp/language/cv"  target="_blank" rel="noopener"
+    >cv-qualification</a>) as the variable type:</li>
+</ul>
+</blockquote>
+<h3 id="return-value-optimization">Return Value Optimization</h3>
+<p>함수에서 생성한 임시 객체를 값으로 반환할 때, 임시 객체의 scope는 함수 내부이므로 반환 이후 소멸된다. 소멸되기 전에 반환할 객체를 생성하고 임시 객체를 복사하는 과정이 필요하다. 하지만 임시 객체는 다른 객체를 초기화하는 용도로만 사용되므로, 복사 과정을 생략하고 그대로 임시 객체를 반환하는 최적화 기법을 Return Value Optimization(RVO)라고 부르며 Copy elision의 한 종류이다.</p>
+<p>반환식에 바로 객체의 초기화식이 와서 임시 객체의 이름이 없는 경우 Unnamed RVO (URVO), 임시 객체를 생성하는 식과 반환식이 분리되어 이름이 있는 경우 Named RVO (NRVO)라고 분류된다. NRVO의 경우 두 개의 식 사이에 다른 대입 연산이 올 수 있는게 특징이고, c++17 이후에도 Non-mandatory한 copy elision으로 간주되어 컴파일러 정책에 따라 적용 유무가 달라진다. (URVO는 c++17부터 필수적으로 적용)</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="k">struct</span> <span class="nc">C</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">C</span><span class="p">(</span><span class="k">const</span> <span class="n">C</span><span class="o">&amp;</span><span class="p">)</span> <span class="p">{</span> <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;A copy was made.</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">C</span> <span class="nf">f</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="n">C</span><span class="p">();</span> <span class="c1">// copy-initialization, calls C::C(const C&amp;) 
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;Hello World</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">C</span> <span class="n">obj</span> <span class="o">=</span> <span class="n">f</span><span class="p">();</span> <span class="c1">// copy-initialization, calls C::C(const C&amp;)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>위의 예제코드의 <code>f</code> 함수가 전형적인 URVO를 적용할 수 있는 케이스이다. 이후 반환된 객체를 초기화할 때 역시 copy-initialization이 필요하지만, Copy elision 기법에 의해 생략될 수 있다. 따라서 &ldquo;Hello world&rdquo; 문자열이 최대 2번, 최소 0번 출력될 수 있고, c++17 이후라면 출력되지 않을 것이다.</p>
+<h2 id="the-problem">The problem</h2>
+<p>c++17 이전 Copy elision 최적화 기법에 관해 컴파일러가 필수적으로 보장해야 할 명세가 없었고, 어차피 생략되는 복사/이동 생성자의 유무를 신경쓰지 않았기에 예상치 못한 <a class="link" href="https://groups.google.com/a/isocpp.org/forum/#!topic/std-proposals/LEzTGnc4FZo"  target="_blank" rel="noopener"
+    >문제</a>가 발견된다.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="k">struct</span> <span class="nc">NonMoveable</span> <span class="p">{</span> 
+</span></span><span class="line"><span class="cl">    <span class="n">NonMoveable</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span> 
+</span></span><span class="line"><span class="cl">    <span class="n">NonMoveable</span><span class="p">(</span><span class="n">NonMoveable</span><span class="o">&amp;&amp;</span><span class="p">)</span> <span class="o">=</span> <span class="k">delete</span><span class="p">;</span> 
+</span></span><span class="line"><span class="cl"><span class="p">};</span> 
+</span></span><span class="line"><span class="cl"><span class="n">NonMoveable</span> <span class="nf">make</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="p">{};</span> <span class="p">}</span> <span class="c1">// compiles in c++11
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>RVO를 지원하는 c++11 컴파일러에서 위 예제 코드를 컴파일하면 에러가 발생한다. <code>make</code> 함수에서 이동 생성자가 지워진 <code>NonMoveable</code> 구조체로 생성한 임시 객체를 반환할 객체로 이동을 시도하기 때문이다. 실제로 RVO가 적용되어 복사/이동 생성자가 사용되지 않지만, 생성자가 없다는 이유로 컴파일을 거부하는 모순적인 상황이 발생한다. 이는 c++11으로는 non-moveable 타입에 대한 factory 함수를 만들 수 없는 것을 의미한다.</p>
+<p>게다가, non-moveable 타입은 AAA(Always Almost Auto) 스타일로 <a class="link" href="https://herbsutter.com/2013/08/12/gotw-94-solution-aaa-style-almost-always-auto/#:~:text=and%20most%20readable%3F-,6.%20Are%20there%20any%20cases%20where%20it%20is%20not%20possible%20to%20use%20the%20style%20in%20%234%20to%20declare%20all%20local%20variables%3F,-There%20is%20one"  target="_blank" rel="noopener"
+    >초기화할 수 없게 된다</a>. (e.g. amotic, lock_guard)</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="k">auto</span> <span class="n">x</span> <span class="o">=</span> <span class="n">NonMoveable</span><span class="p">{};</span> <span class="c1">// compiles in c++11
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>이런 제한 사항은 프로그래머에게 동적 할당된 주소를 반환하는 패턴을 사용하거나, 단순히 에러가 발생하지 않게 하기 위해 흑마법을 사용하게 하는 결과를 초래한다. 좋은 언어라면 프로그래머가 나쁜 코드를 작성하지 않고, 좋은 코드를 짤 수 있도록 설계되어 있다. 다행히 c++은 충분히 좋은 언어이므로, c++17에서는 이런 문제가 발생하지 않는다. (Richard Smith가 제안한 Guaranteed copy elision라는 <a class="link" href="https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2015/p0135r0.html"  target="_blank" rel="noopener"
+    >제안</a>을 통해 문제를 해결함)</p>
+<h2 id="guaranteed-copy-elision">Guaranteed copy elision</h2>
+<p>Guaranteed copy elision은 기존 c++이 prvalue와 glvalue를 어떻게 정의하고 있었고, pvalue가 표현식으로 평가될 때 어떤 일이 벌어지고 있었는 지에 중점을 맞춘다. 아래는 c++17 이전에 정의하고 있던 value categories에 대한 설명이다.</p>
+<blockquote>
+<ul>
+<li>An <em>lvalue</em> (so called, historically, because lvalues could appear on the left-hand side of an assignment expression) designates a function or an object. [ Example: If E is an expression of pointer type, then *E is an lvalue expression referring to the object or function to which E points. As another example, the result of calling a function whose return type is an lvalue reference is an lvalue. - end example ]</li>
+<li>An <em>xvalue</em> (an &ldquo;eXpiring&rdquo; value) also refers to an object, usually near the end of its lifetime (so that its resources may be moved, for example). Certain kinds of expressions involving rvalue references (8.3.2) yield xvalues. [ Example: The result of calling a function whose return type is an rvalue reference to an object type is an xvalue (5.2.2). - end example ]</li>
+<li>A <em>glvalue</em> (&ldquo;generalized&rdquo; lvalue) is an lvalue or an xvalue.</li>
+<li>An <em>rvalue</em> (so called, historically, because rvalues could appear on the right-hand side of an assignment expression) is an xvalue, a temporary object (12.2) or subobject thereof, or a value that is not associated with an object.</li>
+<li>A <em>prvalue</em> (&ldquo;pure&rdquo; rvalue) is an rvalue that is not an xvalue. [ Example: The result of calling a function whose return type is not a reference is a prvalue. The value of a literal such as 12, 7.3e5, or true is also a prvalue. - end example ]</li>
+</ul>
+</blockquote>
+<p>이 설명만 보면 <code>NonMoveable{}</code> 처럼 임시 객체를 초기화하는 식은 prvalue로 분류하고, <code>NonMoveable{}.x</code>은 왜 glvalue로 분류할 수 있었는 지 알기 어렵다.</p>
+<p>Richard Smith는 prvalue와 glvaule 간 혼란을 줄이기 위해 prvalue는 객체를 초기화하는 식, glvalue는 identity를 부여하는 식으로 의미를 구체화했다. 그래서 객체를 초기화하는 식(<code>NonMoveable{}</code>)은 identity를 갖지 않으므로 prvalue로 분류할 수 있고, identity가 부여되는 식(<code>NonMoveable{}.x</code>)은 glvalue로 구분할 수 있다. 이로 인해 c++17 부터는 <a class="link" href="https://timsong-cpp.github.io/cppwp/n4659/basic.lval"  target="_blank" rel="noopener"
+    >value categories에 대한 정의</a>가 바뀌었지만, 기존 값 분류와 어긋나지는 않는다. (조금 더 자세한 기준이 생긴 것으로 봄)</p>
+<blockquote>
+<ul>
+<li>A glvalue [(generalized lvalue)] is an expression whose evaluation determines the identity of an object, bit-field, or function.</li>
+<li>A prvalue is an expression whose evaluation initializes an object or a bit-field, or computes the value of an operand of an operator, as specified by the context in which it appears.</li>
+<li>An xvalue is a glvalue that denotes an object or bit-field whose resources can be reused (usually because it is near the end of its lifetime).</li>
+<li>An lvalue is a glvalue that is not an xvalue.</li>
+<li>An rvalue is a prvalue or an xvalue.</li>
+</ul>
+</blockquote>
+<p>추가적으로 prvalue에 identity가 부여되어 glvalue로 타입 변경이 일어나는 행위를 Temporary materialization이라고 정의하며, c++17 표준에 명시되어 있다. 이 정의가 중요한 이유는 임시 객체가 실제로 필요하기 전까진, 다시 말해 identity가 부여되어 materialization되기 전까지 임시 객체를 생성하지 않아도 되기 때문이다.</p>
+<blockquote>
+<p><strong>Temporary materialization</strong> (since c++17)</p>
+<p>A <a class="link" href="https://en.cppreference.com/w/cpp/language/value_category#prvalue"  target="_blank" rel="noopener"
+    >prvalue</a> of any complete type <code>T</code> can be converted to an xvalue of the same type <code>T</code>. This conversion initializes a <a class="link" href="https://en.cppreference.com/w/cpp/language/lifetime#Temporary_object_lifetime"  target="_blank" rel="noopener"
+    >temporary object</a> of type T from the prvalue by evaluating the prvalue with the temporary object as its result object, and produces an xvalue denoting the temporary object. If <code>T</code> is a class or array of class type, it must have an accessible and non-deleted destructor.</p>
+</blockquote>
+<p>객체의 생명주기를 명시하고있는 <a class="link" href="https://en.cppreference.com/w/cpp/language/lifetime"  target="_blank" rel="noopener"
+    >Lifetime</a> 문서에도 c++17에서 임시 객체는 prvalue가 나타나는 식에서 생성되는게 아니라, materialized될 때 생성한다고 나와있다.</p>
+<blockquote>
+<p>Temporary objects are created when a prvalue is <a class="link" href="https://en.cppreference.com/w/cpp/language/implicit_conversion#Temporary_materialization"  target="_blank" rel="noopener"
+    >materialized</a> so that it can be used as a glvalue, which occurs (since C++17) in the following situations:</p>
+</blockquote>
+<p>그래서 c++17 이전 관점으로 아래 코드를 본다면, &ldquo;임시 객체를 생성하고 임시 객체를 x로 이동하지만 Copy elision으로 이동 과정을 생략함&quot;으로 해석하고, c++17 이후 관점으로는 &ldquo;x를 초기화하는 식&quot;으로 해석할 수 있다.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="k">struct</span> <span class="nc">X</span> <span class="p">{};</span> 
+</span></span><span class="line"><span class="cl"><span class="k">auto</span> <span class="n">x</span> <span class="o">=</span> <span class="n">X</span><span class="p">{};</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>임시 객체가 생성되지 않는다면, 복사나 이동을 생각할 필요 자체가 없어진다. 결국 Copy elision과 복사/이동 생성자 사이의 의존성이 모두 사라져, 이전에 발생했던 모순과 같은 문제들이 전부 해결된다.</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>Guaranteed copy elision는 copy elision를 보완하는 내용이 아닌, 애매하던 기존 c++ value categories의 정의를 좀 더 구체화하고, 임시 객체가 실제 필요할 때 생성하는 방식으로, c++의 기능을 개선함과 동시에 문제를 해결하였다. 이를 통해 c++17에서 임시 객체를 어떻게 바라볼 지, value categories가 갖는 의미에 대해 자세히 알 수 있었다.</p>
+<h2 id="references">References</h2>
+<ol>
+<li><a class="link" href="https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2015/p0135r0.html"  target="_blank" rel="noopener"
+    >https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2015/p0135r0.html</a></li>
+<li><a class="link" href="https://devblogs.microsoft.com/cppblog/guaranteed-copy-elision-does-not-elide-copies/"  target="_blank" rel="noopener"
+    >https://devblogs.microsoft.com/cppblog/guaranteed-copy-elision-does-not-elide-copies/</a></li>
+<li><a class="link" href="https://en.cppreference.com/w/cpp/language/copy_elision"  target="_blank" rel="noopener"
+    >https://en.cppreference.com/w/cpp/language/copy_elision</a></li>
+<li><a class="link" href="https://groups.google.com/a/isocpp.org/forum/#!topic/std-proposals/LEzTGnc4FZo"  target="_blank" rel="noopener"
+    >https://groups.google.com/a/isocpp.org/forum/#!topic/std-proposals/LEzTGnc4FZo</a></li>
+</ol>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/c&#43;&#43;17/">C&#43;&#43;17</a>
+        
+            <a href="/tags/copy-elision/">Copy elision</a>
+        
+            <a href="/tags/return-value-optimization/">Return Value Optimization</a>
+        
+            <a href="/tags/temporary-materialization/">Temporary materialization</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "truealarm-github-io" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2022 - 
+        
+        2023 True Alarm
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.16.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

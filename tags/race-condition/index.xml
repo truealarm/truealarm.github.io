@@ -7,11 +7,11 @@
         <generator>Hugo -- gohugo.io</generator>
         <language>en-us</language>
         <lastBuildDate>Sun, 20 Nov 2022 03:54:03 +0900</lastBuildDate><atom:link href="https://truealarm.github.io/tags/race-condition/index.xml" rel="self" type="application/rss+xml" /><item>
-        <title>Mutual Exclusion(mutex)에 대해</title>
-        <link>https://truealarm.github.io/p/mutual-exclusionmutex%EC%97%90-%EB%8C%80%ED%95%B4/</link>
+        <title>Mutex in a nutshell</title>
+        <link>https://truealarm.github.io/p/mutex-in-a-nutshell/</link>
         <pubDate>Sun, 20 Nov 2022 03:54:03 +0900</pubDate>
         
-        <guid>https://truealarm.github.io/p/mutual-exclusionmutex%EC%97%90-%EB%8C%80%ED%95%B4/</guid>
+        <guid>https://truealarm.github.io/p/mutex-in-a-nutshell/</guid>
         <description>&lt;p&gt;mutex(Mutual execlusion)은 다수의 프로세스나 스레드가 공유하는 자원을 안전하게 사용(concurrent control)할 수 있도록 해주는 기술이다. 상호 배제라는 직역의 의미대로 한 스레드가 이미 임계 영역에 진입했다면 다른 스레드가 임계 영역에 진입하지 못하도록 막아준다. mutex의 원리나 필요성을 제대로 이해하지 않고 멀티스레드 프로그래밍을 한다면, &lt;a class=&#34;link&#34; href=&#34;https://en.wikipedia.org/wiki/Race_condition&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;Race condition&lt;/a&gt; 같은 문제가 발생한다.&lt;/p&gt;
 &lt;h2 id=&#34;race-condition&#34;&gt;Race condition&lt;/h2&gt;
@@ -40,10 +40,10 @@
 &lt;h2 id=&#34;deadlock-freedom&#34;&gt;Deadlock Freedom&lt;/h2&gt;
 &lt;p&gt;mutex를 적용했을 때 보장되어야 하는 특성 중 임계 영역에서 스레드를 상호 배제시켜 주는 mutual exclusion 이외의 중요한 특성이 하나 더 있다. 모든 스레드가 Trying 상태에서 빠져 나가지 못하게 되어 임계 영역의 코드를 실행할 수 없는, 다시 말해 프로세스의 아무런 진전이 없는 교착 상태(&lt;a class=&#34;link&#34; href=&#34;https://en.wikipedia.org/wiki/Deadlock&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;Deadlock&lt;/a&gt;)가 발생하지 않도록 보장해야 한다. 한 스레드가 Trying 상태에서 무한히 기다리고 있다면, 어떤 스레드는 임계 영역에 이미 진입한 상태임을 항상 보장하는 특성이 Deadlock Freedom 이다.&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://truealarm.github.io/p/mutual-exclusionmutex%EC%97%90-%EB%8C%80%ED%95%B4/mutex.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://truealarm.github.io/p/mutex-in-a-nutshell/mutex.png&#34;
 	width=&#34;581&#34;
 	height=&#34;480&#34;
-	srcset=&#34;https://truealarm.github.io/p/mutual-exclusionmutex%EC%97%90-%EB%8C%80%ED%95%B4/mutex_huc88058e091310d3a445f7ed1441ef26d_8588_480x0_resize_box_3.png 480w, https://truealarm.github.io/p/mutual-exclusionmutex%EC%97%90-%EB%8C%80%ED%95%B4/mutex_huc88058e091310d3a445f7ed1441ef26d_8588_1024x0_resize_box_3.png 1024w&#34;
+	srcset=&#34;https://truealarm.github.io/p/mutex-in-a-nutshell/mutex_huc88058e091310d3a445f7ed1441ef26d_8588_480x0_resize_box_3.png 480w, https://truealarm.github.io/p/mutex-in-a-nutshell/mutex_huc88058e091310d3a445f7ed1441ef26d_8588_1024x0_resize_box_3.png 1024w&#34;
 	loading=&#34;lazy&#34;
 	
 		alt=&#34;image-20221115201254116&#34;

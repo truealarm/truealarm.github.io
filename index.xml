@@ -6,7 +6,40 @@
         <description>Recent content on True Alarm</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>en-us</language>
-        <lastBuildDate>Sat, 31 Dec 2022 19:46:30 +0900</lastBuildDate><atom:link href="https://truealarm.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Fri, 20 Jan 2023 14:36:42 +0900</lastBuildDate><atom:link href="https://truealarm.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Today I Learnd: 캡슐화(Encapsulation)</title>
+        <link>https://truealarm.github.io/p/today-i-learnd-%EC%BA%A1%EC%8A%90%ED%99%94encapsulation/</link>
+        <pubDate>Fri, 20 Jan 2023 14:36:42 +0900</pubDate>
+        
+        <guid>https://truealarm.github.io/p/today-i-learnd-%EC%BA%A1%EC%8A%90%ED%99%94encapsulation/</guid>
+        <description>&lt;p&gt;기본적인 개념에 대한 글을 머리속으로 슥슥 읽으면 이해했다는 느낌을 받아도 막상 누군가에게 설명하려고 하면 쉽지 않다. 조리 있게 말하는 언어적 능력이나 논리정연하게 서술하는 것에 익숙하지 않아 그럴 수도 있지만, 완벽히 이해하지 못했을 가능성이 크다. 사실 어느 쪽이 문제인지 상관없이 다른 사람에게 어려운 개념을 이해하기 쉽게 설명할 수 있는 능력은 개발자에게 정말 중요하다고 생각한다. 가벼운 내용이라도 하루에 최소 한번 씩 오늘 읽은 글을 정리하고, 내 언어로 좀 더 쉽게 재가공해보려고 한다. 이번에는 Object-oriented programming 언어의 핵심 개념인 캡슐화(Encapsulation)를 다룬다.&lt;/p&gt;
+&lt;h2 id=&#34;meaning&#34;&gt;Meaning&lt;/h2&gt;
+&lt;p&gt;객체 지향 프로그래밍(Object-oriented programming) 언어에서 Encapsulation은 크게 2가지 의미를 내포한다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;데이터와 데이터를 조작하는 메소드를 하나의 객체로 전부 묶는 행위 (bundling)&lt;/li&gt;
+&lt;li&gt;객체의 내부 요소(data or method)에 직접 접근하지 못하도록 막는 행위 (information hiding)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;첫 번째 의미인 bundling은 객체와 관련된 데이터(state)와 method는 전부 하나의 객체로 묶어서 객체 간 독립성과 응집도를 높이는 방법이다. 독립성과 응집도가 높아지면 요구 사항 변경으로 인한 코드 변경 시에도 최소한의 코드만 수정하면 된다. 예시로 Class에서 멤버 변수와 멤버 함수를 정의하는게 bundling이라고 할 수 있다.&lt;/p&gt;
+&lt;p&gt;두 번째 의미인 information hiding은 객체의 내부 데이터와 method는 객체 내부에서만 접근 가능하고, 외부에서는 공개된 interface를 통해서 접근을 허용하는 방법을 말한다. 그래서 데이터에 접근하거나 변경할 때 객체의 내부 구현체를 살펴보지 않아도 되고, 공개된 interface 정보만 살펴보면 된다. 또한 interface를 통해 제공하는 getter, setter로 데이터에 접근하면 의도치 않은 값으로 변경되는 것을 막을 수 있는 Defensive 프로그래밍이 가능하며 이는 프로그램의 견고함(robustness)을 높여준다. 예시로 Java, C++에서는 접근 제어 지시자인 private, public으로, 파이썬은 name mangling으로 내부 데이터로 직접 접근을 막는다. 그리고 외부로 공개하는 interface나 헤더 파일로 내부 구현체에 대한 정보를 은닉한다.&lt;/p&gt;
+&lt;h2 id=&#34;side-notes&#34;&gt;Side notes&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://www.infoworld.com/article/2075271/encapsulation-is-not-information-hiding.html&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Information hiding은 Encapsulation이 아니다&lt;/a&gt; 라고 주장하는 전문가도 있고, bundling과 information hiding 모두 Encapsulation에 포함되는 개념이라고 보는 전문가도 있다. 나는 두 개념 모두 내포하고 있는 개념이라고 본다..&lt;/li&gt;
+&lt;li&gt;OOP 언어로 고안된 언어가 아닌 C 언어에서도 &lt;code&gt;extern&lt;/code&gt; 키워드를 사용하고 헤더 파일을 분리하는 방식으로 Encapsulation이 가능하다. 이처럼 Encapsulation은 OOP에만 국한된 개념은 절대 아니다.&lt;/li&gt;
+&lt;li&gt;Encapsulation과 마찬가지로 OOP의 대표적인 특성 중 하나인 상속(Inheritance)은 종종 Encapsulation을 해칠 수 있다. 특히 has-a 관계에서 상속을 사용하면 부모의 모든 데이터와 메소드를 물려받기 때문에 자식은 필요없는 정보까지 신경써야 되고, 이는 난잡한 bundling으로 귀결되곤 한다. 관련해서는 Inheritance에 대해 공부하면서 한번 더 정리할 예정이다.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;references&#34;&gt;References&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://en.wikipedia.org/wiki/Encapsulation_%28computer_programming%29&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://en.wikipedia.org/wiki/Encapsulation_(computer_programming)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://www.infoworld.com/article/2075271/encapsulation-is-not-information-hiding.html&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://www.infoworld.com/article/2075271/encapsulation-is-not-information-hiding.html&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://www.cl.cam.ac.uk/teaching/0910/OOProg/lectures_annotated.pdf&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://www.cl.cam.ac.uk/teaching/0910/OOProg/lectures_annotated.pdf&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+        </item>
+        <item>
         <title>Guaranteed copy elision. What&#39;s difference?</title>
         <link>https://truealarm.github.io/p/guaranteed-copy-elision.-whats-difference/</link>
         <pubDate>Sat, 31 Dec 2022 19:46:30 +0900</pubDate>

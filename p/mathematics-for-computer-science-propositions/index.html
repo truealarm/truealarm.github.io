@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='컴퓨터 사이언스를 공부할 때, 특히 알고리즘을 배울 때 수학이 나오면 학습 속도가 급격히 더져지고 결국 발목을 잡히곤 한다. 알고리즘의 타당성이나 시간복잡도를 증명 없이 넘어가면, 핵심을 이해하지 못하고 암기하고 있다는 느낌이 들었고, 위태로운 다리에 지식을 쌓고 있다는 생각이 들곤 했다. 수학을 어디서부터 다시 배워야 할 지 몰라 망설이고 있을 때, MIT 대학의 수업인 &amp;ldquo;Mathematics For Computer Science&amp;quot;를 발견했다. 이 수업을 시작으로 차근차근 수학적 지식을 쌓아보려고 한다. 참고로 OpenCourseWare에 6.042J로 등록된 수업으로 온라인 강의와 거의 교재 수준으로 작성된 강의 노트를 누구나 열람할 수 있다.'>
+<title>Mathematics For Computer Science: Propositions</title>
+
+<link rel='canonical' href='https://truealarm.github.io/p/mathematics-for-computer-science-propositions/'>
+
+<link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='Mathematics For Computer Science: Propositions'>
+<meta property='og:description' content='컴퓨터 사이언스를 공부할 때, 특히 알고리즘을 배울 때 수학이 나오면 학습 속도가 급격히 더져지고 결국 발목을 잡히곤 한다. 알고리즘의 타당성이나 시간복잡도를 증명 없이 넘어가면, 핵심을 이해하지 못하고 암기하고 있다는 느낌이 들었고, 위태로운 다리에 지식을 쌓고 있다는 생각이 들곤 했다. 수학을 어디서부터 다시 배워야 할 지 몰라 망설이고 있을 때, MIT 대학의 수업인 &amp;ldquo;Mathematics For Computer Science&amp;quot;를 발견했다. 이 수업을 시작으로 차근차근 수학적 지식을 쌓아보려고 한다. 참고로 OpenCourseWare에 6.042J로 등록된 수업으로 온라인 강의와 거의 교재 수준으로 작성된 강의 노트를 누구나 열람할 수 있다.'>
+<meta property='og:url' content='https://truealarm.github.io/p/mathematics-for-computer-science-propositions/'>
+<meta property='og:site_name' content='True Alarm'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2023-01-22T16:56:40&#43;09:00'/><meta property='article:modified_time' content='2023-01-22T16:56:40&#43;09:00'/>
+<meta name="twitter:title" content="Mathematics For Computer Science: Propositions">
+<meta name="twitter:description" content="컴퓨터 사이언스를 공부할 때, 특히 알고리즘을 배울 때 수학이 나오면 학습 속도가 급격히 더져지고 결국 발목을 잡히곤 한다. 알고리즘의 타당성이나 시간복잡도를 증명 없이 넘어가면, 핵심을 이해하지 못하고 암기하고 있다는 느낌이 들었고, 위태로운 다리에 지식을 쌓고 있다는 생각이 들곤 했다. 수학을 어디서부터 다시 배워야 할 지 몰라 망설이고 있을 때, MIT 대학의 수업인 &amp;ldquo;Mathematics For Computer Science&amp;quot;를 발견했다. 이 수업을 시작으로 차근차근 수학적 지식을 쌓아보려고 한다. 참고로 OpenCourseWare에 6.042J로 등록된 수업으로 온라인 강의와 거의 교재 수준으로 작성된 강의 노트를 누구나 열람할 수 있다.">
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/flappy1000_hu1c66c531ae5bca477a9190a15e605814_6192_300x0_resize_box_3.png" width="300"
+                            height="273" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">True Alarm</a></h1>
+            <h2 class="site-description">Not false alarm</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/truealarm'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://twitter.com/404'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>Archives</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>Search</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>Dark Mode</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">Table of contents</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#명제-proposition">명제 (Proposition)</a>
+      <ol>
+        <li><a href="#ambiguity">Ambiguity</a></li>
+      </ol>
+    </li>
+    <li><a href="#imply">Imply</a></li>
+    <li><a href="#iff">IFF</a></li>
+    <li><a href="#predicates-and-quantifiers">Predicates and Quantifiers</a>
+      <ol>
+        <li><a href="#predicates">Predicates</a></li>
+        <li><a href="#quantifier">Quantifier</a></li>
+        <li><a href="#order-of-quantifiers">Order of quantifiers</a></li>
+        <li><a href="#negating-quantifiers">Negating Quantifiers</a></li>
+      </ol>
+    </li>
+    <li><a href="#validity-and-satisfiability">Validity and Satisfiability</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/til/" >
+                TIL
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/mathematics-for-computer-science-propositions/">Mathematics For Computer Science: Propositions</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Jan 22, 2023</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    6 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>컴퓨터 사이언스를 공부할 때, 특히 알고리즘을 배울 때 수학이 나오면 학습 속도가 급격히 더져지고 결국 발목을 잡히곤 한다. 알고리즘의 타당성이나 시간복잡도를 증명 없이 넘어가면, 핵심을 이해하지 못하고 암기하고 있다는 느낌이 들었고, 위태로운 다리에 지식을 쌓고 있다는 생각이 들곤 했다. 수학을 어디서부터 다시 배워야 할 지 몰라 망설이고 있을 때, MIT 대학의 수업인 &ldquo;Mathematics For Computer Science&quot;를 발견했다. 이 수업을 시작으로 차근차근 수학적 지식을 쌓아보려고 한다. 참고로 <a class="link" href="https://ocw.mit.edu/"  target="_blank" rel="noopener"
+    >OpenCourseWare</a>에 <a class="link" href="https://ocw.mit.edu/courses/6-042j-mathematics-for-computer-science-fall-2010/pages/syllabus/"  target="_blank" rel="noopener"
+    >6.042J</a>로 등록된 수업으로 온라인 강의와 거의 교재 수준으로 작성된 강의 노트를 누구나 열람할 수 있다.</p>
+<h2 id="명제-proposition">명제 (Proposition)</h2>
+<p>명제(Proposition)는 참(true) 혹은 거짓(false)이 될 수 있는 서술문(statement)를 의미한다. 예를 들어 <code>1+1 = 2</code>  식이나 <code>모든 사람은 생각한다</code> 라는 문장이 proposition이라고 말할 수 있다. 반면에 참, 거짓으로 이어지지 않는 <code>사람은 왜 죽을까?</code>라는 문장은 proposition에 속하지 않는다.</p>
+<h3 id="ambiguity">Ambiguity</h3>
+<p>우리가 일상 생활에서 쓰는 문장과 말은 논리적으로 참, 거짓을 따지기 모호한 경우가 많다. <code>한국인은 대부분 오른손잡이다</code> 라는 문장에서 &ldquo;대부분&quot;이라는 말은 정확히 전체 한국인 중 얼마의 비율을 의미할까? 그리고 오른손잡이는 오른손은 &ldquo;주로&rdquo; 사용하는 사람이라는 뜻인데, 하루에 오른손 사용 빈도가 50%가 넘으면 오른손 잡이라고 하면 될까? 사실 일반적인 대화에서는 대화의 문맥이나 사회적인 통념 등에 의해 구구절절 정확한 표현을 따지지 않아도 충분히 의사소통이 가능하다.</p>
+<p>하지만 수학에서 모호함은 허용되지 않는다. 개인에 견해에 따라 해석이 달라질 수 있는 단어와 표현을 배제하고 논리정연하게 서술된 문장만이 참과 거짓을 논할 수 있는 것이다. 문장의 의미가 정확히 정의되지도 않았는데 참과 거짓을 논한다는 것 자체가 모순이다. 그래서 수학자들은 일상 생활에서 사용하는 &ldquo;모든&rdquo;, &ldquo;일부&rdquo;, &ldquo;또는&rdquo;, &ldquo;그리고&rdquo; 등의 모호한 단어를 전부 명확히 정의하고 기호로 표시하여 대화한다.</p>
+<h2 id="imply">Imply</h2>
+<p>P이면 Q이다, if P then Q 처럼 두 개의 proposition을 가정과 결론의 논리적인 관계로 나타날 때 imply를 사용하고 P-&gt;Q로 표현한다. imply는 proposition이나 일상 용법에도 흔히 나타나는 용법이지만, 직관적이지 않은 부분이 있어 따로 얘기할 만한 내용이 있다. 우선 imply의 진리표는 다음과 같다.</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>P</th>
+<th>Q</th>
+<th>P implies Q</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>T</td>
+<td>T</td>
+<td>T</td>
+</tr>
+<tr>
+<td>T</td>
+<td>F</td>
+<td>F</td>
+</tr>
+<tr>
+<td>F</td>
+<td>T</td>
+<td>T</td>
+</tr>
+<tr>
+<td>F</td>
+<td>F</td>
+<td>T</td>
+</tr>
+</tbody>
+</table></div>
+<p>&ldquo;리만 가설이 참이라면, 모든 실수 x에 대해 x<sup>2</sup>는 0보다 크다.&rdquo; 라는 문장은 &ldquo;리만 가설이 참이라면&quot;가 가정 P, &ldquo;모든 실수에 대해 x<sup>2</sup>는 0보다 크다&quot;라는 결론 Q가 P implies Q 형태를 이루는 proposition이다. 리만 가설은 아직까지 참/거짓이 증명되지 않은 유명한 밀레니엄 문제라 참/거짓을 알 수 없지만, &ldquo;모든 실수에 대해 x<sup>2</sup>는 0보다 크다&quot;라는 proposition은 이미 참으로 증명된 사실이다. 진리표에 따르면 가정 P의 참/거짓 유무에 상관없이 결론 Q가 참이면 결국 참이므로 해당 proposition은 참이다.</p>
+<p>결론 Q가 참인 경우에는 결국 결론이 맞는 말이니 proposition 자체가 맞다고 직관적으로 생각할 수 있지만, 가정 P와 결론 Q 모두 거짓인 proposition도 참인 것은 직관적이지 않다. 어느 한 드라마에서 여주가 남주에게 &ldquo;네가 외계인이면 난 뱀파이어다&rdquo; 라고 말하는 장면이 나온다. 이 문장을 proposition으로 본다면, 가정과 결론 모두 거짓이라 참인 proposition이 된다. (물론 드라마에선 남주가 외계인이라는 가정이 참이였다..) 일생 생활에서 우리는 &ldquo;너가 뱀파이어일 리가 없다&quot;라는 부정의 의미로 반어법을 사용해서 더욱 직관적이지 않아 보이는 것 같다.</p>
+<p>논리적으로 따져보면 가정 명제부터 거짓이라면 결론 명제에 대한 참/거짓을 판단할 수 없다. 하지만 proposition에서 참 혹은 거짓 이외의 &ldquo;모름&rdquo;, &ldquo;알 수 없음&rdquo; 등의 답은 존재하지 않는다. 때문에 수학자들은 가정이 거짓이라면 결론과 상관없이 참으로 결론을 지었다. 여기서 나는 거짓으로 결론 짓는게 더 직관적인데 왜 참으로 정한건 지 이해가 가지 않았는데, 한 블로그 <a class="link" href="https://m.blog.naver.com/PostView.naver?isHttpsRedirect=true&amp;blogId=kyj0833&amp;logNo=220990303979"  target="_blank" rel="noopener"
+    >포스트</a>를 보고 이해가 갔다. &ldquo;P이면 P이다&rdquo; 라는 명제는 직관적으로 참으로 여겨진다. 근데 수학자들이 가정 P가 거짓인 경우 거짓 명제인 거로 정했다면 &ldquo;P이면 P이다&rdquo; 라는 명제를 거짓으로 봐야하는 모순적인 상황이 발생한다. 일상 생활에서 직관적이지 않을 수 있지만, 수학에서는 오히려 직관적으로 보이는 선택이였던 것이다.</p>
+<blockquote>
+<p>결국 implication은 결론 Q가 참이거나 가정 P가 거짓인 경우 참이 되는 proposition이라고 정의할 수 있다.</p>
+</blockquote>
+<h2 id="iff">IFF</h2>
+<p>P if and only if Q 라는 proposition는 P와 Q가 논리적으로 동일한 관계를 나타낸다. 그래서 NXOR 과 진리표가 동일하고 P &lt;-&gt; Q로 표현한다. P-&gt;Q 에서 Q는 P이기 위한 필요 조건(necessary condition)이고 P는 Q이기 위한 충분 조건(sufficient condition)이다. 서로가 서로에게 필요 조건인 동시에 충분 조건이므로 IFF 관계를 필요충분조건(necessary and sufficient condition)이라고도 부른다.</p>
+<h2 id="predicates-and-quantifiers">Predicates and Quantifiers</h2>
+<p>지금까지 예제로 나온 proposition는 모든 경우에 수에 대해 일일히 셀 수 있을 정도의 참/거짓을 판단하기 쉬웠지만, 가능한 모든 경우를 전부 확인하기 어려운 proposition도 많다. 예를 들어 &ldquo;모든 음수가 아닌 숫자 n에 대해 p(n) = n<sup>2</sup> + n + 41은 소수이다.&rdquo; 라는 proposition에서 n&lt;=39인 경우만 참이고 그 이후는 거짓이 된다. cf. <code>p(40) = 40*40 + 40 + 41 = 41</code></p>
+<p>모든 ~에 대해(for all) 라는 표현은 기호로 All에서 A를 뒤집어 ∀ 기호로 표현한다. 그래서 위 proposition을 <code>∀n ∈ N. p(n) is prime</code> 으로 깔끔하게 표현할 수 있다. 다른 예시로 &ldquo;모든 양의 정수 a, b, c, d에 대해 a<sup>4</sup> + b<sup>4</sup> + c<sup>4</sup>= d<sup>4</sup>을 만족하는 해가 없다&rdquo; 라는 proposition은 &ldquo;∀a,b,c,d ∈ Z<sup>+</sup>. a<sup>4</sup> + b<sup>4</sup> + c<sup>4</sup>≠ d<sup>4</sup>&ldquo;라고 표현할 수 있다. 그리고 이 방정식에 대한 해는 1987년 Noam Elkies에 의해 발견되어 거짓인 proposition으로 판명났지만 218년이나 걸렸다.</p>
+<p>이와 비슷하게 무작위 값을 대입해서 확인하는 방식으로 대부분 경우에서 참인 결과가 나와도 우리가 예상치 못한 값으로 거짓으로 판명될 수 있다. 충분히 많은 경우의 수를 대입해서 모두 참이 나와도 결국 모든 경우의 수를 전부 확인하지 않는 이상 확신할 수 없다. 대부분 컴퓨터의 빠른 연산 능력을 통해 유한한 경우의 수를 시도해보지만, 결국 현대 기술로도 모든 경우의 수를 확인할 수는 없다. 그래서 증명은 수학의 꽃이라고 불릴 정도로 난해하고 신기한 영역이지 않을까 싶다.</p>
+<h3 id="predicates">Predicates</h3>
+<p>하나 이상의 변수에 의해 참/거짓이 결정되는 proposition을 predicate라고 부른다. 위 예시에서 봤던 &ldquo;p(n) = n<sup>2</sup> + n + 41은 소수이다.&ldquo;가 predicate에 속하는 것이다.</p>
+<h3 id="quantifier">Quantifier</h3>
+<p>변수에 따라 참/거짓 여부가 달라지는 predicate는 모든 경우에 대해 참일 수도 있고, 몇몇 경우에 대해서만 참일 수 있다. 이렇게 predicate가 참이 되는 빈도수를 모호함 없이 수학적으로 정확히 표현할 때 사용하는게 quantifier이다. 모든 경우에 대해 항상 참이 될 때 사용하는 quantifier를 Universal quantification라고 부르며 ∀ 기호로 표현한다. 몇몇 경우에 대해서만 참이 될 때 사용하는 quantifier는 Existential quantification라고 부르며 ∃ 기호로 표현한다. Existential quantification는 보통 참인 경우가 존재한다(there exists)라고 읽으므로 E를 뒤집은 기호를 사용한다.</p>
+<p>predicate에서 quantifier가 여러 개일 수도 있다. 예를 들어 &ldquo;2보다 큰 모든 짝수는 두 소수의 합이다.&rdquo; 라는 predicate를 좀 더 명확한 표현으로 바꾸면 &ldquo;모든 2보다 큰 짝수 n에 대해 n = p+q를 만족하는 소수 p, q가 존재한다.&ldquo;가 된다. 기호를 이용하면 더욱 간결하게 표현할 수 있다. <code>∀n ∈ Evens. ∃p,q ∈ Primes. n = p+q</code></p>
+<h3 id="order-of-quantifiers">Order of quantifiers</h3>
+<p>quantifier가 여러 개인 predicate는 순서에 따라 의미가 완전히 달라진다. 위에서 사용한 predicate의 quantifier 순서를 바꾸면  ∃p,q ∈ Primes. ∀n ∈ Evens. n = p+q 가 된다. 이를 해석하면 &ldquo;소수인 p, q가 존재한다. 모든 짝수인 n에 대해 n=p+q가 항상 참이 되는.&rdquo; 어순만 반대로고 달라진게 없어보이지만, 이 문장이 의미하는 바는 소수인 p와 q의 합으로 모든 짝수를 만들 수 있는 마법의 p,q가 존재한다는 뜻이 된다.</p>
+<h3 id="negating-quantifiers">Negating Quantifiers</h3>
+<p>&ldquo;모든 사람이 피자를 좋아하는 것은 아니다.&rdquo; 라는 문장과 &ldquo;피자를 좋아하지 않는 사람도 있다.&rdquo; 문장이 뜻하는 바는 같다. 기호로 표현하면 각각 <code>NOT(∀x. P(x))</code>와 <code>∃x. NOT(P(X))</code>으로 표현할 수 있고, 두 개의 식이 같다는 사실을 통해 quantifier에 부정 연산이 적용되면 ∀ -&gt; ∃ 또는 반대로 바뀌는 것을 알 수 있다.</p>
+<h2 id="validity-and-satisfiability">Validity and Satisfiability</h2>
+<p>여러 명제로 이루어진 논리식(Propositional formula)에서 모든 명제의 참/거짓 여부와 상관없이 항상 참이 될 때 타당(valid)한 명제라고 부른다.</p>
+<ul>
+<li><code>[P AND (Q OR R)] IFF [(P AND Q) OR (P AND R)]</code></li>
+</ul>
+<p>위 명제에서 P, Q, R에 대해 모든 경우의 수를 따져 진리표를 작성해보면 결국 <code>P AND (Q OR R)</code>과 <code>(P AND  Q) OR (P AND R)</code> 은 같은 식인 것을 알 수 있다. 이처럼 모든 경우에 수에 대해 참으로 판별된 명제는 타당하다고 말할 수 있다. 비슷하게 주어진 명제를 참으로 만드는 경우의 수가 하나라도 존재하는 경우가 존재하면 satisfiable하다고 말한다.</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">Related content</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/p/today-i-learnd-%EC%BA%A1%EC%8A%90%ED%99%94encapsulation/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Today I Learnd: 캡슐화(Encapsulation)</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "truealarm-github-io" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2022 - 
+        
+        2023 True Alarm
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.16.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

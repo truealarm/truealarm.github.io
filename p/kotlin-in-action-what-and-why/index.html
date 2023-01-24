@@ -237,6 +237,7 @@
         <li><a href="#smart-casts">Smart casts</a></li>
       </ol>
     </li>
+    <li><a href="#conclusion">Conclusion</a></li>
   </ol>
 </nav>
         </div>
@@ -381,8 +382,8 @@
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">Person</span><span class="p">(</span>
-</span></span><span class="line"><span class="cl">	<span class="k">val</span> <span class="py">name</span><span class="p">:</span> <span class="n">String</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">	<span class="k">var</span> <span class="py">isMarried</span><span class="p">:</span> <span class="n">Boolean</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="py">name</span><span class="p">:</span> <span class="n">String</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="k">var</span> <span class="py">isMarried</span><span class="p">:</span> <span class="n">Boolean</span>
 </span></span><span class="line"><span class="cl"><span class="p">)</span>
 </span></span></code></pre></td></tr></table>
 </div>
@@ -410,10 +411,10 @@
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="k">enum</span> <span class="k">class</span> <span class="nc">Color</span><span class="p">(</span><span class="k">val</span> <span class="py">r</span><span class="p">:</span> <span class="n">Int</span><span class="p">,</span> <span class="k">val</span> <span class="py">g</span><span class="p">:</span> <span class="n">Int</span><span class="p">,</span> <span class="k">val</span> <span class="py">b</span><span class="p">:</span> <span class="n">Int</span><span class="p">)</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">    <span class="n">RED</span><span class="p">(</span><span class="m">255</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">0</span><span class="p">),</span> 
-</span></span><span class="line"><span class="cl">  	<span class="o">..</span><span class="p">.</span>
-</span></span><span class="line"><span class="cl">  	<span class="n">BLACK</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">..</span><span class="p">.</span>
+</span></span><span class="line"><span class="cl">    <span class="n">BLACK</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">0</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">  	
-</span></span><span class="line"><span class="cl">  	<span class="k">fun</span> <span class="nf">rgb</span><span class="p">()</span> <span class="p">=</span> <span class="p">(</span><span class="n">r</span> <span class="p">*</span> <span class="m">256</span> <span class="p">+</span> <span class="n">g</span><span class="p">)</span> <span class="p">*</span> <span class="m">256</span> <span class="p">+</span> <span class="n">b</span>
+</span></span><span class="line"><span class="cl">    <span class="k">fun</span> <span class="nf">rgb</span><span class="p">()</span> <span class="p">=</span> <span class="p">(</span><span class="n">r</span> <span class="p">*</span> <span class="m">256</span> <span class="p">+</span> <span class="n">g</span><span class="p">)</span> <span class="p">*</span> <span class="m">256</span> <span class="p">+</span> <span class="n">b</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
@@ -430,12 +431,12 @@
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="k">fun</span> <span class="nf">mix</span><span class="p">(</span><span class="n">c1</span><span class="p">:</span> <span class="n">Color</span><span class="p">,</span> <span class="n">c2</span><span class="p">:</span> <span class="n">Color</span><span class="p">)</span> <span class="p">=</span> 
-</span></span><span class="line"><span class="cl">	<span class="k">when</span> <span class="p">(</span><span class="n">setOf</span><span class="p">(</span><span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">))</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">		<span class="n">setOf</span><span class="p">(</span><span class="n">RED</span><span class="p">,</span> <span class="n">YELLOW</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ORANGE</span>
-</span></span><span class="line"><span class="cl">    <span class="n">setOf</span><span class="p">(</span><span class="n">YELLOW</span><span class="p">,</span> <span class="n">BLUE</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GREEN</span>
-</span></span><span class="line"><span class="cl">    <span class="n">setOf</span><span class="p">(</span><span class="n">BLUE</span><span class="p">,</span> <span class="n">VIOLET</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">INDIGO</span>
-</span></span><span class="line"><span class="cl">		<span class="k">else</span> <span class="o">-&gt;</span> <span class="k">throw</span> <span class="n">Exception</span><span class="p">(</span><span class="s2">&#34;Dirty color&#34;</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">when</span> <span class="p">(</span><span class="n">setOf</span><span class="p">(</span><span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">))</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">setOf</span><span class="p">(</span><span class="n">RED</span><span class="p">,</span> <span class="n">YELLOW</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ORANGE</span>
+</span></span><span class="line"><span class="cl">        <span class="n">setOf</span><span class="p">(</span><span class="n">YELLOW</span><span class="p">,</span> <span class="n">BLUE</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GREEN</span>
+</span></span><span class="line"><span class="cl">        <span class="n">setOf</span><span class="p">(</span><span class="n">BLUE</span><span class="p">,</span> <span class="n">VIOLET</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">INDIGO</span>
+</span></span><span class="line"><span class="cl">        <span class="k">else</span> <span class="o">-&gt;</span> <span class="k">throw</span> <span class="n">Exception</span><span class="p">(</span><span class="s2">&#34;Dirty color&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>Java의 switch 문에서 분기 조건 변수는 문자열, 열거형, 리터럴 등의 상수만 사용할 수 있지만, Kotlin의 switch 문인 when 구문은 연산식을 조건 변수로 사용할 수 있다. 위 예시에서 두 개의 색을 섞는 <code>mix</code> 함수는 case 절마다 <code>setOf</code> 함수가 실행된 결과와 <code>setOf(c1, c2)</code>을 비교한다.</p>
@@ -471,18 +472,18 @@
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="k">fun</span> <span class="nf">eval</span><span class="p">(</span><span class="n">e</span><span class="p">:</span> <span class="n">Expr</span><span class="p">):</span> <span class="n">Int</span> 
 </span></span><span class="line"><span class="cl"><span class="p">{</span>
-</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="p">(</span><span class="n">e</span> <span class="k">is</span> <span class="n">Num</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="py">n</span> <span class="p">=</span> <span class="n">e</span> <span class="k">as</span> <span class="n">Num</span>
-</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">n</span><span class="p">.</span><span class="k">value</span>
-</span></span><span class="line"><span class="cl">  <span class="p">}</span> 
-</span></span><span class="line"><span class="cl">	<span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">e</span> <span class="k">is</span> <span class="n">Sum</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="n">eval</span><span class="p">(</span><span class="n">e</span><span class="p">.</span><span class="n">right</span><span class="p">)</span> <span class="p">+</span> <span class="n">eval</span><span class="p">(</span><span class="n">e</span><span class="p">.</span><span class="n">left</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">  <span class="p">}</span>
-</span></span><span class="line"><span class="cl">	<span class="k">throw</span> <span class="n">IllegalArgumentException</span><span class="p">(</span><span class="s2">&#34;Unknown expression&#34;</span><span class="p">)</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">e</span> <span class="k">is</span> <span class="n">Num</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">val</span> <span class="py">n</span> <span class="p">=</span> <span class="n">e</span> <span class="k">as</span> <span class="n">Num</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">n</span><span class="p">.</span><span class="k">value</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span> 
+</span></span><span class="line"><span class="cl">    <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">e</span> <span class="k">is</span> <span class="n">Sum</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">eval</span><span class="p">(</span><span class="n">e</span><span class="p">.</span><span class="n">right</span><span class="p">)</span> <span class="p">+</span> <span class="n">eval</span><span class="p">(</span><span class="n">e</span><span class="p">.</span><span class="n">left</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">throw</span> <span class="n">IllegalArgumentException</span><span class="p">(</span><span class="s2">&#34;Unknown expression&#34;</span><span class="p">)</span> <span class="p">}</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
-</div><p>위 함수에서 타입을 비교하는 if문 내부로 진입했다면 <code>e</code>가 <code>Num</code> 클래스인 것을 확정할 수 있지만, e가 Base 클래스인 <code>Expr</code> 클래스로 전달됐기 때문에, 굳이 <code>Num</code> 클래스로 변환하고 있다. 만약 컴파일러가 좀 더 똑똑해서 if 문이 의미하는 바를 알아차렸다면, 굳이 알려주지 않아도 유도리있게 <code>Num</code>으로 간주할 수 있을 것이다. 이런 기능을 Smart cast라 부르고 Kotlin에서 지원하는 기능이다. 다만 위 경우처럼 if문을 통해 컴파일러가 명확하게 하나의 변수의 타입으로 추론할 수 있는 경우만 적용된다.</p>
+</div><p>위 함수에서 타입을 비교하는 if문 내부로 진입했다면 <code>e</code>가 <code>Num</code> 클래스인 것을 확정할 수 있지만, e가 Base 클래스인 <code>Expr</code> 클래스로 전달됐기 때문에, <code>Num</code> 클래스로 변환하고 있다. 만약 컴파일러가 좀 더 똑똑해서 if 문이 의미하는 바를 알아차렸다면, 유도리있게 <code>Num</code>으로 간주할 수 있을 것이다. 이런 기능을 Smart cast라 부르고 Kotlin에서 지원하는 기능이다. 다만 위 경우처럼 if문을 통해 컴파일러가 명확하게 하나의 변수의 타입으로 추론할 수 있는 경우만 적용된다.</p>
 <p>expression body, when, smart cast을 통해 <code>eval</code> 함수를 Kotlin 스타일로 바꾸면 아래처럼 훨씬 간결하게 짤 수 있다!</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -495,11 +496,11 @@
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="k">fun</span> <span class="nf">eval</span><span class="p">(</span><span class="n">e</span><span class="p">:</span> <span class="n">Expr</span><span class="p">):</span> <span class="n">Int</span> <span class="p">=</span>
-</span></span><span class="line"><span class="cl">	<span class="k">when</span> <span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">		<span class="k">is</span> <span class="n">Num</span> <span class="o">-&gt;</span> <span class="n">e</span><span class="p">.</span><span class="k">value</span>
-</span></span><span class="line"><span class="cl">		<span class="k">is</span> <span class="n">Sum</span> <span class="o">-&gt;</span> <span class="n">eval</span><span class="p">(</span><span class="n">e</span><span class="p">.</span><span class="n">right</span><span class="p">)</span> <span class="p">+</span> <span class="n">eval</span><span class="p">(</span><span class="n">e</span><span class="p">.</span><span class="n">left</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">		<span class="k">else</span> <span class="o">-&gt;</span> <span class="k">throw</span> <span class="n">IllegalArgumentException</span><span class="p">(</span><span class="s2">&#34;Unknown expression&#34;</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">when</span> <span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">is</span> <span class="n">Num</span> <span class="o">-&gt;</span> <span class="n">e</span><span class="p">.</span><span class="k">value</span>
+</span></span><span class="line"><span class="cl">        <span class="k">is</span> <span class="n">Sum</span> <span class="o">-&gt;</span> <span class="n">eval</span><span class="p">(</span><span class="n">e</span><span class="p">.</span><span class="n">right</span><span class="p">)</span> <span class="p">+</span> <span class="n">eval</span><span class="p">(</span><span class="n">e</span><span class="p">.</span><span class="n">left</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">else</span> <span class="o">-&gt;</span> <span class="k">throw</span> <span class="n">IllegalArgumentException</span><span class="p">(</span><span class="s2">&#34;Unknown expression&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>참고로 expression으로 처리되는 if, when, try 구문에서 block을 통해 여러 줄을 구성한 경우, 해당 expression이 평가되는 값은 마지막 라인에 위치한 expression이 평가된 값이다.</p>
@@ -516,16 +517,18 @@
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="k">fun</span> <span class="nf">eval</span><span class="p">(</span><span class="n">e</span><span class="p">:</span> <span class="n">Expr</span><span class="p">):</span> <span class="n">Int</span> <span class="p">=</span>
-</span></span><span class="line"><span class="cl">	<span class="k">when</span> <span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">		<span class="k">is</span> <span class="n">Num</span> <span class="o">-&gt;</span><span class="p">{</span>
-</span></span><span class="line"><span class="cl">      <span class="n">println</span><span class="p">(</span><span class="s2">&#34;num: </span><span class="si">${e.value}</span><span class="s2">&#34;</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">      <span class="n">e</span><span class="p">.</span><span class="k">value</span>
+</span></span><span class="line"><span class="cl">    <span class="k">when</span> <span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">is</span> <span class="n">Num</span> <span class="o">-&gt;</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">println</span><span class="p">(</span><span class="s2">&#34;num: </span><span class="si">${e.value}</span><span class="s2">&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">e</span><span class="p">.</span><span class="k">value</span>
 </span></span><span class="line"><span class="cl">    <span class="p">}</span>
-</span></span><span class="line"><span class="cl">		<span class="o">..</span><span class="p">.</span>
-</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">..</span><span class="p">.</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
-</div>
+</div><h2 id="conclusion">Conclusion</h2>
+<p>여기까지 1,2 Chapter를 읽고 다시 정리하기에 중요하다고 생각한 내용을 다루어봤다. 다음 포스트에선 Chapter 3인 &ldquo;Defining and calling functions&quot;를 읽고 정리할 예정이다.</p>
+
 </section>
 
 

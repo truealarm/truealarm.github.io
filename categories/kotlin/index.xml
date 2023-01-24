@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
     <channel>
-        <title>TIL on True Alarm</title>
-        <link>https://truealarm.github.io/categories/til/</link>
-        <description>Recent content in TIL on True Alarm</description>
+        <title>Kotlin on True Alarm</title>
+        <link>https://truealarm.github.io/categories/kotlin/</link>
+        <description>Recent content in Kotlin on True Alarm</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>en-us</language>
-        <lastBuildDate>Mon, 23 Jan 2023 21:14:32 +0900</lastBuildDate><atom:link href="https://truealarm.github.io/categories/til/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Mon, 23 Jan 2023 21:14:32 +0900</lastBuildDate><atom:link href="https://truealarm.github.io/categories/kotlin/index.xml" rel="self" type="application/rss+xml" /><item>
         <title>Kotlin in Action: What and Why</title>
         <link>https://truealarm.github.io/p/kotlin-in-action-what-and-why/</link>
         <pubDate>Mon, 23 Jan 2023 21:14:32 +0900</pubDate>
@@ -218,116 +218,6 @@
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;</description>
-        </item>
-        <item>
-        <title>Mathematics For Computer Science: Propositions</title>
-        <link>https://truealarm.github.io/p/mathematics-for-computer-science-propositions/</link>
-        <pubDate>Sun, 22 Jan 2023 16:56:40 +0900</pubDate>
-        
-        <guid>https://truealarm.github.io/p/mathematics-for-computer-science-propositions/</guid>
-        <description>&lt;p&gt;컴퓨터 사이언스를 공부할 때, 특히 알고리즘을 배울 때 수학이 나오면 학습 속도가 급격히 더져지고 결국 발목을 잡히곤 한다. 알고리즘의 타당성이나 시간복잡도를 증명 없이 넘어가면, 핵심을 이해하지 못하고 암기하고 있다는 느낌이 들었고, 위태로운 다리에 지식을 쌓고 있다는 생각이 들곤 했다. 수학을 어디서부터 다시 배워야 할 지 몰라 망설이고 있을 때, MIT 대학의 수업인 &amp;ldquo;Mathematics For Computer Science&amp;quot;를 발견했다. 이 수업을 시작으로 차근차근 수학적 지식을 쌓아보려고 한다. 참고로 &lt;a class=&#34;link&#34; href=&#34;https://ocw.mit.edu/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
-    &gt;OpenCourseWare&lt;/a&gt;에 &lt;a class=&#34;link&#34; href=&#34;https://ocw.mit.edu/courses/6-042j-mathematics-for-computer-science-fall-2010/pages/syllabus/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
-    &gt;6.042J&lt;/a&gt;로 등록된 수업으로 온라인 강의와 거의 교재 수준으로 작성된 강의 노트를 누구나 열람할 수 있다.&lt;/p&gt;
-&lt;h2 id=&#34;명제-proposition&#34;&gt;명제 (Proposition)&lt;/h2&gt;
-&lt;p&gt;명제(Proposition)는 참(true) 혹은 거짓(false)이 될 수 있는 서술문(statement)를 의미한다. 예를 들어 &lt;code&gt;1+1 = 2&lt;/code&gt;  식이나 &lt;code&gt;모든 사람은 생각한다&lt;/code&gt; 라는 문장이 proposition이라고 말할 수 있다. 반면에 참, 거짓으로 이어지지 않는 &lt;code&gt;사람은 왜 죽을까?&lt;/code&gt;라는 문장은 proposition에 속하지 않는다.&lt;/p&gt;
-&lt;h3 id=&#34;ambiguity&#34;&gt;Ambiguity&lt;/h3&gt;
-&lt;p&gt;우리가 일상 생활에서 쓰는 문장과 말은 논리적으로 참, 거짓을 따지기 모호한 경우가 많다. &lt;code&gt;한국인은 대부분 오른손잡이다&lt;/code&gt; 라는 문장에서 &amp;ldquo;대부분&amp;quot;이라는 말은 정확히 전체 한국인 중 얼마의 비율을 의미할까? 그리고 오른손잡이는 오른손은 &amp;ldquo;주로&amp;rdquo; 사용하는 사람이라는 뜻인데, 하루에 오른손 사용 빈도가 50%가 넘으면 오른손 잡이라고 하면 될까? 사실 일반적인 대화에서는 대화의 문맥이나 사회적인 통념 등에 의해 구구절절 정확한 표현을 따지지 않아도 충분히 의사소통이 가능하다.&lt;/p&gt;
-&lt;p&gt;하지만 수학에서 모호함은 허용되지 않는다. 개인에 견해에 따라 해석이 달라질 수 있는 단어와 표현을 배제하고 논리정연하게 서술된 문장만이 참과 거짓을 논할 수 있는 것이다. 문장의 의미가 정확히 정의되지도 않았는데 참과 거짓을 논한다는 것 자체가 모순이다. 그래서 수학자들은 일상 생활에서 사용하는 &amp;ldquo;모든&amp;rdquo;, &amp;ldquo;일부&amp;rdquo;, &amp;ldquo;또는&amp;rdquo;, &amp;ldquo;그리고&amp;rdquo; 등의 모호한 단어를 전부 명확히 정의하고 기호로 표시하여 대화한다.&lt;/p&gt;
-&lt;h2 id=&#34;imply&#34;&gt;Imply&lt;/h2&gt;
-&lt;p&gt;P이면 Q이다, if P then Q 처럼 두 개의 proposition을 가정과 결론의 논리적인 관계로 나타날 때 imply를 사용하고 P-&amp;gt;Q로 표현한다. imply는 proposition이나 일상 용법에도 흔히 나타나는 용법이지만, 직관적이지 않은 부분이 있어 따로 얘기할 만한 내용이 있다. 우선 imply의 진리표는 다음과 같다.&lt;/p&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;P&lt;/th&gt;
-&lt;th&gt;Q&lt;/th&gt;
-&lt;th&gt;P implies Q&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;T&lt;/td&gt;
-&lt;td&gt;T&lt;/td&gt;
-&lt;td&gt;T&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;T&lt;/td&gt;
-&lt;td&gt;F&lt;/td&gt;
-&lt;td&gt;F&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;F&lt;/td&gt;
-&lt;td&gt;T&lt;/td&gt;
-&lt;td&gt;T&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;F&lt;/td&gt;
-&lt;td&gt;F&lt;/td&gt;
-&lt;td&gt;T&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;p&gt;&amp;ldquo;리만 가설이 참이라면, 모든 실수 x에 대해 x&lt;sup&gt;2&lt;/sup&gt;는 0보다 크다.&amp;rdquo; 라는 문장은 &amp;ldquo;리만 가설이 참이라면&amp;quot;가 가정 P, &amp;ldquo;모든 실수에 대해 x&lt;sup&gt;2&lt;/sup&gt;는 0보다 크다&amp;quot;라는 결론 Q가 P implies Q 형태를 이루는 proposition이다. 리만 가설은 아직까지 참/거짓이 증명되지 않은 유명한 밀레니엄 문제라 참/거짓을 알 수 없지만, &amp;ldquo;모든 실수에 대해 x&lt;sup&gt;2&lt;/sup&gt;는 0보다 크다&amp;quot;라는 proposition은 이미 참으로 증명된 사실이다. 진리표에 따르면 가정 P의 참/거짓 유무에 상관없이 결론 Q가 참이면 결국 참이므로 해당 proposition은 참이다.&lt;/p&gt;
-&lt;p&gt;결론 Q가 참인 경우에는 결국 결론이 맞는 말이니 proposition 자체가 맞다고 직관적으로 생각할 수 있지만, 가정 P와 결론 Q 모두 거짓인 proposition도 참인 것은 직관적이지 않다. 어느 한 드라마에서 여주가 남주에게 &amp;ldquo;네가 외계인이면 난 뱀파이어다&amp;rdquo; 라고 말하는 장면이 나온다. 이 문장을 proposition으로 본다면, 가정과 결론 모두 거짓이라 참인 proposition이 된다. (물론 드라마에선 남주가 외계인이라는 가정이 참이였다..) 일생 생활에서 우리는 &amp;ldquo;너가 뱀파이어일 리가 없다&amp;quot;라는 부정의 의미로 반어법을 사용해서 더욱 직관적이지 않아 보이는 것 같다.&lt;/p&gt;
-&lt;p&gt;논리적으로 따져보면 가정 명제부터 거짓이라면 결론 명제에 대한 참/거짓을 판단할 수 없다. 하지만 proposition에서 참 혹은 거짓 이외의 &amp;ldquo;모름&amp;rdquo;, &amp;ldquo;알 수 없음&amp;rdquo; 등의 답은 존재하지 않는다. 때문에 수학자들은 가정이 거짓이라면 결론과 상관없이 참으로 결론을 지었다. 여기서 나는 거짓으로 결론 짓는게 더 직관적인데 왜 참으로 정한건 지 이해가 가지 않았는데, 한 블로그 &lt;a class=&#34;link&#34; href=&#34;https://m.blog.naver.com/PostView.naver?isHttpsRedirect=true&amp;amp;blogId=kyj0833&amp;amp;logNo=220990303979&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
-    &gt;포스트&lt;/a&gt;를 보고 이해가 갔다. &amp;ldquo;P이면 P이다&amp;rdquo; 라는 명제는 직관적으로 참으로 여겨진다. 근데 수학자들이 가정 P가 거짓인 경우 거짓 명제인 거로 정했다면 &amp;ldquo;P이면 P이다&amp;rdquo; 라는 명제를 거짓으로 봐야하는 모순적인 상황이 발생한다. 일상 생활에서 직관적이지 않을 수 있지만, 수학에서는 오히려 직관적으로 보이는 선택이였던 것이다.&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;결국 implication은 결론 Q가 참이거나 가정 P가 거짓인 경우 참이 되는 proposition이라고 정의할 수 있다.&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;h2 id=&#34;iff&#34;&gt;IFF&lt;/h2&gt;
-&lt;p&gt;P if and only if Q 라는 proposition는 P와 Q가 논리적으로 동일한 관계를 나타낸다. 그래서 NXOR 과 진리표가 동일하고 P &amp;lt;-&amp;gt; Q로 표현한다. P-&amp;gt;Q 에서 Q는 P이기 위한 필요 조건(necessary condition)이고 P는 Q이기 위한 충분 조건(sufficient condition)이다. 서로가 서로에게 필요 조건인 동시에 충분 조건이므로 IFF 관계를 필요충분조건(necessary and sufficient condition)이라고도 부른다.&lt;/p&gt;
-&lt;h2 id=&#34;predicates-and-quantifiers&#34;&gt;Predicates and Quantifiers&lt;/h2&gt;
-&lt;p&gt;지금까지 예제로 나온 proposition는 모든 경우에 수에 대해 일일히 셀 수 있을 정도의 참/거짓을 판단하기 쉬웠지만, 가능한 모든 경우를 전부 확인하기 어려운 proposition도 많다. 예를 들어 &amp;ldquo;모든 음수가 아닌 숫자 n에 대해 p(n) = n&lt;sup&gt;2&lt;/sup&gt; + n + 41은 소수이다.&amp;rdquo; 라는 proposition에서 n&amp;lt;=39인 경우만 참이고 그 이후는 거짓이 된다. cf. &lt;code&gt;p(40) = 40*40 + 40 + 41 = 41&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;모든 ~에 대해(for all) 라는 표현은 기호로 All에서 A를 뒤집어 ∀ 기호로 표현한다. 그래서 위 proposition을 &lt;code&gt;∀n ∈ N. p(n) is prime&lt;/code&gt; 으로 깔끔하게 표현할 수 있다. 다른 예시로 &amp;ldquo;모든 양의 정수 a, b, c, d에 대해 a&lt;sup&gt;4&lt;/sup&gt; + b&lt;sup&gt;4&lt;/sup&gt; + c&lt;sup&gt;4&lt;/sup&gt;= d&lt;sup&gt;4&lt;/sup&gt;을 만족하는 해가 없다&amp;rdquo; 라는 proposition은 &amp;ldquo;∀a,b,c,d ∈ Z&lt;sup&gt;+&lt;/sup&gt;. a&lt;sup&gt;4&lt;/sup&gt; + b&lt;sup&gt;4&lt;/sup&gt; + c&lt;sup&gt;4&lt;/sup&gt;≠ d&lt;sup&gt;4&lt;/sup&gt;&amp;ldquo;라고 표현할 수 있다. 그리고 이 방정식에 대한 해는 1987년 Noam Elkies에 의해 발견되어 거짓인 proposition으로 판명났지만 218년이나 걸렸다.&lt;/p&gt;
-&lt;p&gt;이와 비슷하게 무작위 값을 대입해서 확인하는 방식으로 대부분 경우에서 참인 결과가 나와도 우리가 예상치 못한 값으로 거짓으로 판명될 수 있다. 충분히 많은 경우의 수를 대입해서 모두 참이 나와도 결국 모든 경우의 수를 전부 확인하지 않는 이상 확신할 수 없다. 대부분 컴퓨터의 빠른 연산 능력을 통해 유한한 경우의 수를 시도해보지만, 결국 현대 기술로도 모든 경우의 수를 확인할 수는 없다. 그래서 증명은 수학의 꽃이라고 불릴 정도로 난해하고 신기한 영역이지 않을까 싶다.&lt;/p&gt;
-&lt;h3 id=&#34;predicates&#34;&gt;Predicates&lt;/h3&gt;
-&lt;p&gt;하나 이상의 변수에 의해 참/거짓이 결정되는 proposition을 predicate라고 부른다. 위 예시에서 봤던 &amp;ldquo;p(n) = n&lt;sup&gt;2&lt;/sup&gt; + n + 41은 소수이다.&amp;ldquo;가 predicate에 속하는 것이다.&lt;/p&gt;
-&lt;h3 id=&#34;quantifier&#34;&gt;Quantifier&lt;/h3&gt;
-&lt;p&gt;변수에 따라 참/거짓 여부가 달라지는 predicate는 모든 경우에 대해 참일 수도 있고, 몇몇 경우에 대해서만 참일 수 있다. 이렇게 predicate가 참이 되는 빈도수를 모호함 없이 수학적으로 정확히 표현할 때 사용하는게 quantifier이다. 모든 경우에 대해 항상 참이 될 때 사용하는 quantifier를 Universal quantification라고 부르며 ∀ 기호로 표현한다. 몇몇 경우에 대해서만 참이 될 때 사용하는 quantifier는 Existential quantification라고 부르며 ∃ 기호로 표현한다. Existential quantification는 보통 참인 경우가 존재한다(there exists)라고 읽으므로 E를 뒤집은 기호를 사용한다.&lt;/p&gt;
-&lt;p&gt;predicate에서 quantifier가 여러 개일 수도 있다. 예를 들어 &amp;ldquo;2보다 큰 모든 짝수는 두 소수의 합이다.&amp;rdquo; 라는 predicate를 좀 더 명확한 표현으로 바꾸면 &amp;ldquo;모든 2보다 큰 짝수 n에 대해 n = p+q를 만족하는 소수 p, q가 존재한다.&amp;ldquo;가 된다. 기호를 이용하면 더욱 간결하게 표현할 수 있다. &lt;code&gt;∀n ∈ Evens. ∃p,q ∈ Primes. n = p+q&lt;/code&gt;&lt;/p&gt;
-&lt;h3 id=&#34;order-of-quantifiers&#34;&gt;Order of quantifiers&lt;/h3&gt;
-&lt;p&gt;quantifier가 여러 개인 predicate는 순서에 따라 의미가 완전히 달라진다. 위에서 사용한 predicate의 quantifier 순서를 바꾸면  ∃p,q ∈ Primes. ∀n ∈ Evens. n = p+q 가 된다. 이를 해석하면 &amp;ldquo;소수인 p, q가 존재한다. 모든 짝수인 n에 대해 n=p+q가 항상 참이 되는.&amp;rdquo; 어순만 반대로고 달라진게 없어보이지만, 이 문장이 의미하는 바는 소수인 p와 q의 합으로 모든 짝수를 만들 수 있는 마법의 p,q가 존재한다는 뜻이 된다.&lt;/p&gt;
-&lt;h3 id=&#34;negating-quantifiers&#34;&gt;Negating Quantifiers&lt;/h3&gt;
-&lt;p&gt;&amp;ldquo;모든 사람이 피자를 좋아하는 것은 아니다.&amp;rdquo; 라는 문장과 &amp;ldquo;피자를 좋아하지 않는 사람도 있다.&amp;rdquo; 문장이 뜻하는 바는 같다. 기호로 표현하면 각각 &lt;code&gt;NOT(∀x. P(x))&lt;/code&gt;와 &lt;code&gt;∃x. NOT(P(X))&lt;/code&gt;으로 표현할 수 있고, 두 개의 식이 같다는 사실을 통해 quantifier에 부정 연산이 적용되면 ∀ -&amp;gt; ∃ 또는 반대로 바뀌는 것을 알 수 있다.&lt;/p&gt;
-&lt;h2 id=&#34;validity-and-satisfiability&#34;&gt;Validity and Satisfiability&lt;/h2&gt;
-&lt;p&gt;여러 명제로 이루어진 논리식(Propositional formula)에서 모든 명제의 참/거짓 여부와 상관없이 항상 참이 될 때 타당(valid)한 명제라고 부른다.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;[P AND (Q OR R)] IFF [(P AND Q) OR (P AND R)]&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;위 명제에서 P, Q, R에 대해 모든 경우의 수를 따져 진리표를 작성해보면 결국 &lt;code&gt;P AND (Q OR R)&lt;/code&gt;과 &lt;code&gt;(P AND  Q) OR (P AND R)&lt;/code&gt; 은 같은 식인 것을 알 수 있다. 이처럼 모든 경우에 수에 대해 참으로 판별된 명제는 타당하다고 말할 수 있다. 비슷하게 주어진 명제를 참으로 만드는 경우의 수가 하나라도 존재하는 경우가 존재하면 satisfiable하다고 말한다.&lt;/p&gt;
-</description>
-        </item>
-        <item>
-        <title>Today I Learnd: 캡슐화(Encapsulation)</title>
-        <link>https://truealarm.github.io/p/today-i-learnd-%EC%BA%A1%EC%8A%90%ED%99%94encapsulation/</link>
-        <pubDate>Fri, 20 Jan 2023 14:36:42 +0900</pubDate>
-        
-        <guid>https://truealarm.github.io/p/today-i-learnd-%EC%BA%A1%EC%8A%90%ED%99%94encapsulation/</guid>
-        <description>&lt;p&gt;기본적인 개념에 대한 글을 머리속으로 슥슥 읽으면 이해했다는 느낌을 받아도 막상 누군가에게 설명하려고 하면 쉽지 않다. 조리 있게 말하는 언어적 능력이나 논리정연하게 서술하는 것에 익숙하지 않아 그럴 수도 있지만, 완벽히 이해하지 못했을 가능성이 크다. 사실 어느 쪽이 문제인지 상관없이 다른 사람에게 어려운 개념을 이해하기 쉽게 설명할 수 있는 능력은 개발자에게 정말 중요하다고 생각한다. 가벼운 내용이라도 하루에 최소 한번 씩 오늘 읽은 글을 정리하고, 내 언어로 좀 더 쉽게 재가공해보려고 한다. 이번에는 Object-oriented programming 언어의 핵심 개념인 캡슐화(Encapsulation)를 다룬다.&lt;/p&gt;
-&lt;h2 id=&#34;meaning&#34;&gt;Meaning&lt;/h2&gt;
-&lt;p&gt;객체 지향 프로그래밍(Object-oriented programming) 언어에서 Encapsulation은 크게 2가지 의미를 내포한다.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;데이터와 데이터를 조작하는 메소드를 하나의 객체로 전부 묶는 행위 (bundling)&lt;/li&gt;
-&lt;li&gt;객체의 내부 요소(data or method)에 직접 접근하지 못하도록 막는 행위 (information hiding)&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;첫 번째 의미인 bundling은 객체와 관련된 데이터(state)와 method는 전부 하나의 객체로 묶어서 객체 간 독립성과 응집도를 높이는 방법이다. 독립성과 응집도가 높아지면 요구 사항 변경으로 인한 코드 변경 시에도 최소한의 코드만 수정하면 된다. 예시로 Class에서 멤버 변수와 멤버 함수를 정의하는게 bundling이라고 할 수 있다.&lt;/p&gt;
-&lt;p&gt;두 번째 의미인 information hiding은 객체의 내부 데이터와 method는 객체 내부에서만 접근 가능하고, 외부에서는 공개된 interface를 통해서 접근을 허용하는 방법을 말한다. 그래서 데이터에 접근하거나 변경할 때 객체의 내부 구현체를 살펴보지 않아도 되고, 공개된 interface 정보만 살펴보면 된다. 또한 interface를 통해 제공하는 getter, setter로 데이터에 접근하면 의도치 않은 값으로 변경되는 것을 막을 수 있는 Defensive 프로그래밍이 가능하며 이는 프로그램의 견고함(robustness)을 높여준다. 예시로 Java, C++에서는 접근 제어 지시자인 private, public으로, 파이썬은 name mangling으로 내부 데이터로 직접 접근을 막는다. 그리고 외부로 공개하는 interface나 헤더 파일로 내부 구현체에 대한 정보를 은닉한다.&lt;/p&gt;
-&lt;h2 id=&#34;side-notes&#34;&gt;Side notes&lt;/h2&gt;
-&lt;ol&gt;
-&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://www.infoworld.com/article/2075271/encapsulation-is-not-information-hiding.html&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
-    &gt;Information hiding은 Encapsulation이 아니다&lt;/a&gt; 라고 주장하는 전문가도 있고, bundling과 information hiding 모두 Encapsulation에 포함되는 개념이라고 보는 전문가도 있다. 나는 두 개념 모두 내포하고 있는 개념이라고 본다..&lt;/li&gt;
-&lt;li&gt;OOP 언어로 고안된 언어가 아닌 C 언어에서도 &lt;code&gt;extern&lt;/code&gt; 키워드를 사용하고 헤더 파일을 분리하는 방식으로 Encapsulation이 가능하다. 이처럼 Encapsulation은 OOP에만 국한된 개념은 절대 아니다.&lt;/li&gt;
-&lt;li&gt;Encapsulation과 마찬가지로 OOP의 대표적인 특성 중 하나인 상속(Inheritance)은 종종 Encapsulation을 해칠 수 있다. 특히 has-a 관계에서 상속을 사용하면 부모의 모든 데이터와 메소드를 물려받기 때문에 자식은 필요없는 정보까지 신경써야 되고, 이는 난잡한 bundling으로 귀결되곤 한다. 관련해서는 Inheritance에 대해 공부하면서 한번 더 정리할 예정이다.&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h2 id=&#34;references&#34;&gt;References&lt;/h2&gt;
-&lt;ol&gt;
-&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://en.wikipedia.org/wiki/Encapsulation_%28computer_programming%29&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
-    &gt;https://en.wikipedia.org/wiki/Encapsulation_(computer_programming)&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://www.infoworld.com/article/2075271/encapsulation-is-not-information-hiding.html&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
-    &gt;https://www.infoworld.com/article/2075271/encapsulation-is-not-information-hiding.html&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://www.cl.cam.ac.uk/teaching/0910/OOProg/lectures_annotated.pdf&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
-    &gt;https://www.cl.cam.ac.uk/teaching/0910/OOProg/lectures_annotated.pdf&lt;/a&gt;&lt;/li&gt;
-&lt;/ol&gt;
-</description>
         </item>
         
     </channel>

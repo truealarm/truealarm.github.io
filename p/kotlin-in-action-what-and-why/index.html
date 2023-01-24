@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='최근 kakao tech 유튜브 채널에서 카카오톡 메시징 시스템을 C&#43;&#43; 서버에서 Kotlin 서버로 재건축한 과정을 설명하는 영상을 봤다. 이미 오랜 기간 운영하던 C&#43;&#43; 서버를 드러내기로 결심한 이유가 가장 궁금했는데, C&#43;&#43; 서버를 유지보수할 인력이 점점 줄어들고 있고 수년후에는 인력난이 더 심각해져 정상적인 운영이 불가능할 것 같아서 이런 결정을 내렸다고 영상에서 설명한다. 뿐만 아니라 다른 JVM 기반 서버와 호환성과 통신 과정에 대해 고려할 사항이 줄어들고, gc 정책을 변경한 뒤 벤치마크 테스트를 수행한 결과 기존 C&#43;&#43; 서버와 큰 성능 차이가 없었다고 한다.'>
+<title>Kotlin in Action: What and Why</title>
+
+<link rel='canonical' href='https://truealarm.github.io/p/kotlin-in-action-what-and-why/'>
+
+<link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='Kotlin in Action: What and Why'>
+<meta property='og:description' content='최근 kakao tech 유튜브 채널에서 카카오톡 메시징 시스템을 C&#43;&#43; 서버에서 Kotlin 서버로 재건축한 과정을 설명하는 영상을 봤다. 이미 오랜 기간 운영하던 C&#43;&#43; 서버를 드러내기로 결심한 이유가 가장 궁금했는데, C&#43;&#43; 서버를 유지보수할 인력이 점점 줄어들고 있고 수년후에는 인력난이 더 심각해져 정상적인 운영이 불가능할 것 같아서 이런 결정을 내렸다고 영상에서 설명한다. 뿐만 아니라 다른 JVM 기반 서버와 호환성과 통신 과정에 대해 고려할 사항이 줄어들고, gc 정책을 변경한 뒤 벤치마크 테스트를 수행한 결과 기존 C&#43;&#43; 서버와 큰 성능 차이가 없었다고 한다.'>
+<meta property='og:url' content='https://truealarm.github.io/p/kotlin-in-action-what-and-why/'>
+<meta property='og:site_name' content='True Alarm'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2023-01-23T21:14:32&#43;09:00'/><meta property='article:modified_time' content='2023-01-23T21:14:32&#43;09:00'/>
+<meta name="twitter:title" content="Kotlin in Action: What and Why">
+<meta name="twitter:description" content="최근 kakao tech 유튜브 채널에서 카카오톡 메시징 시스템을 C&#43;&#43; 서버에서 Kotlin 서버로 재건축한 과정을 설명하는 영상을 봤다. 이미 오랜 기간 운영하던 C&#43;&#43; 서버를 드러내기로 결심한 이유가 가장 궁금했는데, C&#43;&#43; 서버를 유지보수할 인력이 점점 줄어들고 있고 수년후에는 인력난이 더 심각해져 정상적인 운영이 불가능할 것 같아서 이런 결정을 내렸다고 영상에서 설명한다. 뿐만 아니라 다른 JVM 기반 서버와 호환성과 통신 과정에 대해 고려할 사항이 줄어들고, gc 정책을 변경한 뒤 벤치마크 테스트를 수행한 결과 기존 C&#43;&#43; 서버와 큰 성능 차이가 없었다고 한다.">
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/flappy1000_hu1c66c531ae5bca477a9190a15e605814_6192_300x0_resize_box_3.png" width="300"
+                            height="273" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">True Alarm</a></h1>
+            <h2 class="site-description">Not false alarm</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/truealarm'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://twitter.com/404'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>Archives</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>Search</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>Dark Mode</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">Table of contents</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#the-philosophy-of-kotlin">The philosophy of Kotlin</a></li>
+    <li><a href="#kotlin-basics">Kotlin basics</a>
+      <ol>
+        <li><a href="#statements-and-expressions">Statements and Expressions</a></li>
+        <li><a href="#expression-bodies">Expression bodies</a></li>
+        <li><a href="#properties">Properties</a></li>
+        <li><a href="#enums-and-when">Enums and &ldquo;when&rdquo;</a></li>
+        <li><a href="#smart-casts">Smart casts</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/kotlin/" >
+                Kotlin
+            </a>
+        
+            <a href="/categories/til/" >
+                TIL
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/kotlin-in-action-what-and-why/">Kotlin in Action: What and Why</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Jan 23, 2023</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    7 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>최근 <a class="link" href="https://www.youtube.com/watch?v=_Of8e0o6u3U"  target="_blank" rel="noopener"
+    >kakao tech 유튜브 채널</a>에서 카카오톡 메시징 시스템을 C++ 서버에서 Kotlin 서버로 재건축한 과정을 설명하는 영상을 봤다. 이미 오랜 기간 운영하던 C++ 서버를 드러내기로 결심한 이유가 가장 궁금했는데,  C++ 서버를 유지보수할 인력이 점점 줄어들고 있고 수년후에는 인력난이 더 심각해져 정상적인 운영이 불가능할 것 같아서 이런 결정을 내렸다고 영상에서 설명한다. 뿐만 아니라 다른 JVM 기반 서버와 호환성과 통신 과정에 대해 고려할 사항이 줄어들고, gc 정책을 변경한 뒤 벤치마크 테스트를 수행한 결과 기존 C++ 서버와 큰 성능 차이가 없었다고 한다.</p>
+<p>사실 영상을 보기 전부터 현업에서 Spring과 함께 활발하게 사용되는 언어라 깊이있게 공부할 필요성을 느꼈고, 개인적으로 Java/Kotlin 기반 서버가 왜 이렇게 인기가 많고, 왜 이곳저곳에서 사용되는지 궁금했다. 잠시 시간을 내서 Kotlin이 어떤 느낌의 언어인지만 살펴봤는데 주력 언어로 배우고 싶을 정도로 매력적인 언어라는 생각이 들었다. 그래서 <a class="link" href="https://www.amazon.com/Kotlin-Action-Dmitry-Jemerov/dp/1617293296"  target="_blank" rel="noopener"
+    >Kotlin In Action</a> 서적을 시작으로 차근차근 공부해보려고 한다. 이번 포스트는 1,2 Chapter에 대한 내용을 다룬다.</p>
+<h2 id="the-philosophy-of-kotlin">The philosophy of Kotlin</h2>
+<p>Kotlin은 IntelliJ의 개발사인 JetBrains에서 만든 언어이며, JetBrains의 IDE 사용 데이터와 커뮤니티의 피드백을 반영하며 수년간 많은 변화를 겪다 출시되었다. 개발자들은 실용적(Pramatic)이고, 간결(Concise)하고, 안전(Safe)하면서 기존 Java와 상호 운용 가능(Interoperable)한 언어인 Kotlin을 탄생시켰다. 물론 자세히 배우지 않고는 이 4가지 특성이 어떻게 반영되고 있는지 모르겠지만, 몇가지 주요 특성만 살펴봐도 Koltin의 철학에 대해 공감할 수 있을 것이다. 개인적으로 Kotlin이 맘에 들었던 이유는 <u><strong>Kotlin의 철학과 4가지 특성 모두 실제 현업에서 발생하는 비즈니스 문제 해결을 중시한다는 점이다.</strong></u></p>
+<p>그래서 Kotlin은 최첨단 컴파일러 기술을 통해 혁신적인 성능과 발전을 도모하기 보다, 이미 다른 언어에서 수년간 사용되며 좋다고 검증된 기술들을 모아 Kotlin 스타일로 녹이는 것에 집중한다. 아마 여러 언어를 배워본 사람이라면, 이후에 나오는 Kotlin 기능은 이미 다른 언어의 주력 기능임을 알아차릴 수 있을 것이다. (그래서 금방 배울 수 있다!)</p>
+<p>Kotlin은 직관적이고 가독성이 높은 코드를 작성하도록 설계되어 있고, Java와 달리 형식적으로 반복되는 코드가 필요없어 아주 간결한 코드를 짤 수 있는게 특징이다. 간결한 코드는 그만큼 우리가 읽어야 하는 코드의 양을 줄여주고, 가독성이 높은 코드는 기존 코드를 더욱 빨리빨리 읽을 수 있게 도와준다. 이는 개발자가 최대한 비즈니스 문제 해결에만 신경쓰면 된다는 것을 의미한다.</p>
+<p>안전하다는 특성도 Kotlin의 장점을 부각시켜 주는 특성이다. Kotlin은 정적 타입 언어로 컴파일 타임에 모든 표현식의 타입이 결정된다. 그래서 컴파일 타임에서 타입 검사를 통해 최대한 많은 버그를 미리 잡아낼 수 있다. 물론 모든 변수나 표현식에 대해 자료형을 명시하지 않아도 컴파일러가 추론 가능한 경우는 자동으로 타입을 부여해주므로 개발자의 부담이 크게 늘어나지 않는다. 오히려 사소한 버그를 미연에 방지하여 불필요한 디버깅 시간을 줄일 수 있어 훨씬 이득이다. 또한 컴파일 타임에 모든 변수의 타입을 알 수 있기에 런타임 타입 검사를 제거하여 성능 향상을 노릴 수 있고, IDE에 타입 정보를 제공하여 더욱 스마트한 자동 완성 기능 등에 활용할 수 있다.</p>
+<p>안전성 관련해서 Kotlin은 null을 기본적으로 허용하지 않는 언어이기도 하다. 방심에서 비롯되는 수많은 널 포인터 참조 이슈와 같은 문제를 개발자가 방심하지 못하도록 막아주는 동시에, 깔끔하게 null을 처리할 수 있는 연산자나 구문을 제공하여 간결함을 침해하지 않는다.</p>
+<p>마지막으로 Kotlin은 기존 Java 코드와 완벽히 호환될 수 있어, Java 라이브러리를 그대로 사용할 수 있고, Java에서도 Kotlin 라이브러리를 사용할 수 있다. 그래서 Java가 사용되고 있는 모든 환경에서 Kotlin도 사용할 수 있다. 심지어 Java 파일과 Kotlin 파일을 같은 프로젝트에 포함시켜 개발할 수 있다. 이는 Java가 갖는 강력한 장점을 Kotlin도 누릴 수 있다는 것을 의미한다.</p>
+<h2 id="kotlin-basics">Kotlin basics</h2>
+<p>Chapter 2는 Kotlin 언어의 핵심 기능과 기본적인 문법을 설명한다. 여기서 내가 따로 정리한 내용은 기본적인 문법에 대한 내용은 빼고, 내가 생각하기에 한번 더 언급할 만한 내용만 다뤘으니 자세한 내용은 서적을 참고하면 된다.</p>
+<h3 id="statements-and-expressions">Statements and Expressions</h3>
+<p>statement는 컴파일러가 이해할 수 있는 독립적인 코드 구문, 실행 과정에서 유의미한 효과를 발생시키는 구문을 의미하고, expression은 statement 중에서 실행 과정에서 값으로 평가될 수 있는 구문을 의미한다.</p>
+<ul>
+<li><code>val number = 1 // statement</code></li>
+<li><code>func(); // expression</code></li>
+</ul>
+<p>위 예시에서 <code>val number = 1</code> 문은 컴파일러가 이해할 수 있고 실행 시 변수를 선언하는 효과를 갖지만, 값으로 평가되지 않는 구문이다. 반면에 함수를 호출하는 <code>func()</code> 구문의 경우는 실행 이후 함수의 반환값으로 값을 갖는 expression에 속한다.</p>
+<p>이 얘기를 꺼낸 이유는 Kotlin에서 반복문을 제외하고 if/else문, switch문, 심지어 try/catch 문 등의 block statement가 expression으로 처리되기 때문이다. 그래서 아래처럼 switch 구문이 값을 갖는 구문으로 평가될 수 있고, 대입문의 피연산자로 사용하는 등의 문법이 가능하다. C, C++, Java 같은 언어였다면 익명 함수(lambda)와 <code>return</code> 구문을 통해 구현해야 하지만, Kotlin에서는 형식적인 코드가 전부 필요없어 간결하고, 오히려 가독성이 높은 코드로 구현있는 것이다.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="k">val</span> <span class="py">msg</span> <span class="p">=</span> <span class="k">when</span> <span class="p">(</span><span class="n">code</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="m">200</span> <span class="o">-&gt;</span> <span class="s2">&#34;OK&#34;</span> <span class="c1">// return &#34;OK&#34;
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="m">400</span> <span class="o">-&gt;</span> <span class="s2">&#34;Bad Request&#34;</span> <span class="c1">// return &#34;Bad Request&#34; 
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="m">404</span> <span class="o">-&gt;</span> <span class="s2">&#34;Not Found&#34;</span> <span class="c1">// return &#34;Not Found&#34;
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">else</span> <span class="o">-&gt;</span> <span class="s2">&#34;N/A&#34;</span> <span class="c1">// return &#34;N/A&#34;
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="expression-bodies">Expression bodies</h3>
+<p>Kotlin은 함수의 body를 expression으로만 구성하는게 가능하다. 아래 예시처럼 대입 연산자을 통해 expression이 평가된 값을 반환한다고 명시해주면 된다. if 문이 값을 가질 수 있는 expression임을 알고 있다면 return 구문을 통해 반환을 명시적으로 표현하지 않아도, 직관적으로 함수가 어떻게 동작하는지 이해할 수 있다. 간결함을 중요시하는 Kotlin과 아주 어울리는 문법이다.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="k">fun</span> <span class="nf">max</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="n">Int</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">Int</span><span class="p">):</span> <span class="n">Int</span> <span class="p">=</span> <span class="k">if</span> <span class="p">(</span><span class="n">a</span> <span class="p">&gt;</span> <span class="n">b</span><span class="p">)</span> <span class="n">a</span> <span class="k">else</span> <span class="n">b</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="properties">Properties</h3>
+<p>Object-oriented programming 언어라면 객체의 데이터(field)는 객체 안으로 집어넣고, 외부에서 직접 접근을 막는 캡슐화(Encapsulation) 원칙을 거의 무조건 고수한다. 내부 데이터인 field에 접근하거나 변경할 때는, field를 추상화한 property를 외부로 노출하고 이를 통해서만 접근하게 만들어 클래스 내부 정보를 최대한 숨긴다.</p>
+<p>Java에서 Class를 정의할 때는 private한 데이터(field)와 데이터 접근자(getter/setter)를 모두 구현해야 property를 정의할 수 있었다. (물론 Java 뿐만 아니라 많은 언어에서도 이런 방식을 많이 사용한다.) 반면에 Kotlin은 field와 accessor의 구분없이 Class에 선언된 변수는 전부 property로 처리된다. mutable한 property는 <code>var</code>로 immutable한 property는 <code>val</code>로 선언하면 된다. i.e. <code>var</code> = writable, <code>val</code> = readonly</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">Person</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">	<span class="k">val</span> <span class="py">name</span><span class="p">:</span> <span class="n">String</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="k">var</span> <span class="py">isMarried</span><span class="p">:</span> <span class="n">Boolean</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>덕분에 field에 접근하는 getter/setter를 구현할 때 단순히 값을 반환/설정하는 형식적인 코드를 굳이 작성하지 않아도 된다. 당연히 getter/setter에서 값 검사와 같은 추가 로직이 필요한 경우 아래처럼 custom accessor를 사용하면 된다. (<code>get</code> , <code>set</code> 키워드를 사용)</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="k">val</span> <span class="py">area</span> <span class="k">get</span><span class="p">()</span> <span class="p">=</span> <span class="k">this</span><span class="p">.</span><span class="n">width</span> <span class="p">*</span> <span class="k">this</span><span class="p">.</span><span class="n">height</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="enums-and-when">Enums and &ldquo;when&rdquo;</h3>
+<p>Kotlin에서 열거형(enum)은 단순히 type-safe한 일련의 숫자가 아니라, 클래스처럼 property와 method를 정의할 수 있고 초기화할 수 있는 객체이다. 그저 enum 상수의 열거가 끝나는 지점에 세미콜론만 붙여주면 된다.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="k">enum</span> <span class="k">class</span> <span class="nc">Color</span><span class="p">(</span><span class="k">val</span> <span class="py">r</span><span class="p">:</span> <span class="n">Int</span><span class="p">,</span> <span class="k">val</span> <span class="py">g</span><span class="p">:</span> <span class="n">Int</span><span class="p">,</span> <span class="k">val</span> <span class="py">b</span><span class="p">:</span> <span class="n">Int</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">RED</span><span class="p">(</span><span class="m">255</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">0</span><span class="p">),</span> 
+</span></span><span class="line"><span class="cl">  	<span class="o">..</span><span class="p">.</span>
+</span></span><span class="line"><span class="cl">  	<span class="n">BLACK</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  	
+</span></span><span class="line"><span class="cl">  	<span class="k">fun</span> <span class="nf">rgb</span><span class="p">()</span> <span class="p">=</span> <span class="p">(</span><span class="n">r</span> <span class="p">*</span> <span class="m">256</span> <span class="p">+</span> <span class="n">g</span><span class="p">)</span> <span class="p">*</span> <span class="m">256</span> <span class="p">+</span> <span class="n">b</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>객체처럼 사용이 가능한 enum class는 기존 enum 상수보다 좀 더 유연하게 사용할 수 있고, when 구문과 같이 사용될 때 진가가 발휘된다.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="k">fun</span> <span class="nf">mix</span><span class="p">(</span><span class="n">c1</span><span class="p">:</span> <span class="n">Color</span><span class="p">,</span> <span class="n">c2</span><span class="p">:</span> <span class="n">Color</span><span class="p">)</span> <span class="p">=</span> 
+</span></span><span class="line"><span class="cl">	<span class="k">when</span> <span class="p">(</span><span class="n">setOf</span><span class="p">(</span><span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">))</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">setOf</span><span class="p">(</span><span class="n">RED</span><span class="p">,</span> <span class="n">YELLOW</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ORANGE</span>
+</span></span><span class="line"><span class="cl">    <span class="n">setOf</span><span class="p">(</span><span class="n">YELLOW</span><span class="p">,</span> <span class="n">BLUE</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GREEN</span>
+</span></span><span class="line"><span class="cl">    <span class="n">setOf</span><span class="p">(</span><span class="n">BLUE</span><span class="p">,</span> <span class="n">VIOLET</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">INDIGO</span>
+</span></span><span class="line"><span class="cl">		<span class="k">else</span> <span class="o">-&gt;</span> <span class="k">throw</span> <span class="n">Exception</span><span class="p">(</span><span class="s2">&#34;Dirty color&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>Java의 switch 문에서 분기 조건 변수는 문자열, 열거형, 리터럴 등의 상수만 사용할 수 있지만, Kotlin의 switch 문인 when 구문은 연산식을 조건 변수로 사용할 수 있다. 위 예시에서 두 개의 색을 섞는 <code>mix</code> 함수는 case 절마다 <code>setOf</code> 함수가 실행된 결과와 <code>setOf(c1, c2)</code>을 비교한다.</p>
+<h3 id="smart-casts">Smart casts</h3>
+<p>Kotlin은 컴파일러에게 특정 타입이라고 확정할 수 있는 정보가 제공된다면, 코드에서 굳이 형변환을 하지 않아도 되는 Smart cast를 지원한다. 무슨 기능인지 예제를 통해 살펴보자. &ldquo;(1 + 2) + 3&quot;과 같은 간단한 덧셈 연산식을 평가하는 프로그램을 구현한다고 했을 때, 연산식의 피연산자는 이진 트리의 노드로, 각각의 연산자는 <code>Expr</code>를 상속한 <code>Num</code>, <code>Sum</code> 클래스로 정의할 수 있다.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="k">interface</span> <span class="nc">Expr</span>
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">Num</span><span class="p">(</span><span class="k">val</span> <span class="py">value</span><span class="p">:</span> <span class="n">Int</span><span class="p">)</span> <span class="p">:</span> <span class="n">Expr</span>
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">Sum</span><span class="p">(</span><span class="k">val</span> <span class="py">left</span><span class="p">:</span> <span class="n">Expr</span><span class="p">,</span> <span class="k">val</span> <span class="py">right</span><span class="p">:</span> <span class="n">Expr</span><span class="p">)</span> <span class="p">:</span> <span class="n">Expr</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>이 상황에서 연산식을 평가하는 <code>eval</code> 함수는 인자로 전달된 Expr 클래스가 <code>Num</code>인 경우는 숫자를 반환하고, <code>Sum</code>인 경우는 더한 결과를 재귀 호출로 계산하여 반환하면 된다. ( <code>is</code> 메소드는 Java에서 변수의 자료형을 반환하는 <code>instanceof</code>과 같다고 보면 된다.)</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="k">fun</span> <span class="nf">eval</span><span class="p">(</span><span class="n">e</span><span class="p">:</span> <span class="n">Expr</span><span class="p">):</span> <span class="n">Int</span> 
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="p">(</span><span class="n">e</span> <span class="k">is</span> <span class="n">Num</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="py">n</span> <span class="p">=</span> <span class="n">e</span> <span class="k">as</span> <span class="n">Num</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">n</span><span class="p">.</span><span class="k">value</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span> 
+</span></span><span class="line"><span class="cl">	<span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">e</span> <span class="k">is</span> <span class="n">Sum</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="n">eval</span><span class="p">(</span><span class="n">e</span><span class="p">.</span><span class="n">right</span><span class="p">)</span> <span class="p">+</span> <span class="n">eval</span><span class="p">(</span><span class="n">e</span><span class="p">.</span><span class="n">left</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">throw</span> <span class="n">IllegalArgumentException</span><span class="p">(</span><span class="s2">&#34;Unknown expression&#34;</span><span class="p">)</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>위 함수에서 타입을 비교하는 if문 내부로 진입했다면 <code>e</code>가 <code>Num</code> 클래스인 것을 확정할 수 있지만, e가 Base 클래스인 <code>Expr</code> 클래스로 전달됐기 때문에, 굳이 <code>Num</code> 클래스로 변환하고 있다. 만약 컴파일러가 좀 더 똑똑해서 if 문이 의미하는 바를 알아차렸다면, 굳이 알려주지 않아도 유도리있게 <code>Num</code>으로 간주할 수 있을 것이다. 이런 기능을 Smart cast라 부르고 Kotlin에서 지원하는 기능이다. 다만 위 경우처럼 if문을 통해 컴파일러가 명확하게 하나의 변수의 타입으로 추론할 수 있는 경우만 적용된다.</p>
+<p>expression body, when, smart cast을 통해 <code>eval</code> 함수를 Kotlin 스타일로 바꾸면 아래처럼 훨씬 간결하게 짤 수 있다!</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="k">fun</span> <span class="nf">eval</span><span class="p">(</span><span class="n">e</span><span class="p">:</span> <span class="n">Expr</span><span class="p">):</span> <span class="n">Int</span> <span class="p">=</span>
+</span></span><span class="line"><span class="cl">	<span class="k">when</span> <span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">is</span> <span class="n">Num</span> <span class="o">-&gt;</span> <span class="n">e</span><span class="p">.</span><span class="k">value</span>
+</span></span><span class="line"><span class="cl">		<span class="k">is</span> <span class="n">Sum</span> <span class="o">-&gt;</span> <span class="n">eval</span><span class="p">(</span><span class="n">e</span><span class="p">.</span><span class="n">right</span><span class="p">)</span> <span class="p">+</span> <span class="n">eval</span><span class="p">(</span><span class="n">e</span><span class="p">.</span><span class="n">left</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">else</span> <span class="o">-&gt;</span> <span class="k">throw</span> <span class="n">IllegalArgumentException</span><span class="p">(</span><span class="s2">&#34;Unknown expression&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>참고로 expression으로 처리되는 if, when, try 구문에서 block을 통해 여러 줄을 구성한 경우, 해당 expression이 평가되는 값은 마지막 라인에 위치한 expression이 평가된 값이다.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="k">fun</span> <span class="nf">eval</span><span class="p">(</span><span class="n">e</span><span class="p">:</span> <span class="n">Expr</span><span class="p">):</span> <span class="n">Int</span> <span class="p">=</span>
+</span></span><span class="line"><span class="cl">	<span class="k">when</span> <span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">is</span> <span class="n">Num</span> <span class="o">-&gt;</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="n">println</span><span class="p">(</span><span class="s2">&#34;num: </span><span class="si">${e.value}</span><span class="s2">&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">      <span class="n">e</span><span class="p">.</span><span class="k">value</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="o">..</span><span class="p">.</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div>
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">Related content</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/p/mathematics-for-computer-science-propositions/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Mathematics For Computer Science: Propositions</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/p/today-i-learnd-%EC%BA%A1%EC%8A%90%ED%99%94encapsulation/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Today I Learnd: 캡슐화(Encapsulation)</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "truealarm-github-io" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2022 - 
+        
+        2023 True Alarm
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.16.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

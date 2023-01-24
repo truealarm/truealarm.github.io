@@ -6,12 +6,36 @@
         <description>Recent content in Categories on True Alarm</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>en-us</language>
-        <lastBuildDate>Sun, 22 Jan 2023 16:56:40 +0900</lastBuildDate><atom:link href="https://truealarm.github.io/categories/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Mon, 23 Jan 2023 21:14:32 +0900</lastBuildDate><atom:link href="https://truealarm.github.io/categories/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Kotlin</title>
+        <link>https://truealarm.github.io/categories/kotlin/</link>
+        <pubDate>Mon, 23 Jan 2023 21:14:32 +0900</pubDate>
+        
+        <guid>https://truealarm.github.io/categories/kotlin/</guid>
+        <description></description>
+        </item>
+        <item>
         <title>TIL</title>
         <link>https://truealarm.github.io/categories/til/</link>
-        <pubDate>Sun, 22 Jan 2023 16:56:40 +0900</pubDate>
+        <pubDate>Mon, 23 Jan 2023 21:14:32 +0900</pubDate>
         
         <guid>https://truealarm.github.io/categories/til/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Math</title>
+        <link>https://truealarm.github.io/categories/math/</link>
+        <pubDate>Sun, 22 Jan 2023 16:56:40 +0900</pubDate>
+        
+        <guid>https://truealarm.github.io/categories/math/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>OOP</title>
+        <link>https://truealarm.github.io/categories/oop/</link>
+        <pubDate>Fri, 20 Jan 2023 14:36:42 +0900</pubDate>
+        
+        <guid>https://truealarm.github.io/categories/oop/</guid>
         <description></description>
         </item>
         <item>

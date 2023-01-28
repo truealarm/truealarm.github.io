@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='이번 포스트는 LeetCode에서 단순 연결 리스트(Single linked list)에 순환(cycle)이 존재하는지 찾는 문제를 풀며 배운 cycle detection 알고리즘을 다룬다. 이와 관련해서 풀었던 문제 목록은 아래 적어두었으니 처음 보는 문제라면 먼저 풀어보는 것을 추천한다!
+Linked List Cycle Linked List Cycle II 어떤 방식으로든 문제를 해결했다면 다른 사람의 풀이랑 시간, 공간 복잡도를 비교하는 과정을 통해 내가 작성한 코드보다 효율적인 알고리즘을 배울 수 있다. 그 중 Cycle detection 위키에 아주 상세히 나와있는 Floyd&amp;rsquo;s cycle-finding algorithm과 Brent&amp;rsquo;s algorithm에 대해 정리해보았다.'>
+<title>Cycle detection in a sequence</title>
+
+<link rel='canonical' href='https://truealarm.github.io/p/cycle-detection-in-a-sequence/'>
+
+<link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='Cycle detection in a sequence'>
+<meta property='og:description' content='이번 포스트는 LeetCode에서 단순 연결 리스트(Single linked list)에 순환(cycle)이 존재하는지 찾는 문제를 풀며 배운 cycle detection 알고리즘을 다룬다. 이와 관련해서 풀었던 문제 목록은 아래 적어두었으니 처음 보는 문제라면 먼저 풀어보는 것을 추천한다!
+Linked List Cycle Linked List Cycle II 어떤 방식으로든 문제를 해결했다면 다른 사람의 풀이랑 시간, 공간 복잡도를 비교하는 과정을 통해 내가 작성한 코드보다 효율적인 알고리즘을 배울 수 있다. 그 중 Cycle detection 위키에 아주 상세히 나와있는 Floyd&amp;rsquo;s cycle-finding algorithm과 Brent&amp;rsquo;s algorithm에 대해 정리해보았다.'>
+<meta property='og:url' content='https://truealarm.github.io/p/cycle-detection-in-a-sequence/'>
+<meta property='og:site_name' content='True Alarm'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2023-01-27T21:05:32&#43;09:00'/><meta property='article:modified_time' content='2023-01-27T21:05:32&#43;09:00'/>
+<meta name="twitter:title" content="Cycle detection in a sequence">
+<meta name="twitter:description" content="이번 포스트는 LeetCode에서 단순 연결 리스트(Single linked list)에 순환(cycle)이 존재하는지 찾는 문제를 풀며 배운 cycle detection 알고리즘을 다룬다. 이와 관련해서 풀었던 문제 목록은 아래 적어두었으니 처음 보는 문제라면 먼저 풀어보는 것을 추천한다!
+Linked List Cycle Linked List Cycle II 어떤 방식으로든 문제를 해결했다면 다른 사람의 풀이랑 시간, 공간 복잡도를 비교하는 과정을 통해 내가 작성한 코드보다 효율적인 알고리즘을 배울 수 있다. 그 중 Cycle detection 위키에 아주 상세히 나와있는 Floyd&amp;rsquo;s cycle-finding algorithm과 Brent&amp;rsquo;s algorithm에 대해 정리해보았다.">
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/flappy1000_hu1c66c531ae5bca477a9190a15e605814_6192_300x0_resize_box_3.png" width="300"
+                            height="273" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">True Alarm</a></h1>
+            <h2 class="site-description">Not false alarm</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/truealarm'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://twitter.com/404'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>Archives</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>Search</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>Dark Mode</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">Table of contents</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#definitions">Definitions</a></li>
+    <li><a href="#naive-algorithm">Naive algorithm</a></li>
+    <li><a href="#floyds-cycle-finding-algorithm">Floyd&rsquo;s cycle-finding algorithm</a></li>
+    <li><a href="#brents-algorithm">Brent&rsquo;s algorithm</a></li>
+    <li><a href="#conclusion">Conclusion</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/algorithm/" >
+                Algorithm
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/cycle-detection-in-a-sequence/">Cycle detection in a sequence</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Jan 27, 2023</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    6 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>이번 포스트는 LeetCode에서 단순 연결 리스트(Single linked list)에 순환(cycle)이 존재하는지 찾는 문제를 풀며 배운 cycle detection 알고리즘을 다룬다. 이와 관련해서 풀었던 문제 목록은 아래 적어두었으니 처음 보는 문제라면 먼저 풀어보는 것을 추천한다!</p>
+<ul>
+<li><a class="link" href="https://leetcode.com/problems/linked-list-cycle/"  target="_blank" rel="noopener"
+    >Linked List Cycle</a></li>
+<li><a class="link" href="https://leetcode.com/problems/linked-list-cycle-ii/"  target="_blank" rel="noopener"
+    >Linked List Cycle II</a></li>
+</ul>
+<p>어떤 방식으로든 문제를 해결했다면 다른 사람의 풀이랑 시간, 공간 복잡도를 비교하는 과정을 통해 내가 작성한 코드보다 효율적인 알고리즘을 배울 수 있다. 그 중 <a class="link" href="https://en.wikipedia.org/wiki/Cycle_detection"  target="_blank" rel="noopener"
+    >Cycle detection</a> 위키에 아주 상세히 나와있는 Floyd&rsquo;s cycle-finding algorithm과 Brent&rsquo;s algorithm에 대해 정리해보았다.</p>
+<h2 id="definitions">Definitions</h2>
+<p>앞으로 나올 알고리즘을 쉽게 이해하기 위해, 싱글 링크드 리스트에서 순환을 찾는 문제를 수학적으로 표현하면 다음과 같다. 유한 집합 S에 속하는 함수 f에 대해, 초기값 x<sub>0</sub>부터 iterated function에 대입하여 얻은 sequence에서 x<sub>i</sub> = x<sub>j</sub> 를 만족하는 서로 다른 i, j가 존재하면, x<sub>i</sub> ~ x<sub>j-1</sub>가 주기적으로 반복됨을 의미한다.</p>
+<ul>
+<li>x<sub>0</sub>,  x<sub>1</sub>  =  f(x<sub>0</sub>), x<sub>2</sub> = f(x<sub>1</sub>), &hellip; , x<sub>i</sub> = f(x<sub>i-1</sub>)</li>
+</ul>
+<p>반복적으로 계속 나타나는 sequence 중 가장 작은 인덱스 <em>μ</em>와 x<sub>μ</sub> = x<sub>λ + μ</sub>를 만족하는 가장 작은 λ를 찾는게 Cycle dection algorithm의 핵심이다.</p>
+<ul>
+<li>μ : 순환이 처음 시작되는 위치의 인덱스</li>
+<li>λ : 순환의 주기</li>
+</ul>
+<blockquote>
+<p>📝 <strong>Note : Iterated function</strong></p>
+<p>Iterated function은 <em>f</em> : <em>X</em> → <em>X</em> 인 함수 그 자체를 반복적으로 합성한 함수이다. 이는 임의의 초기 값의 출력을 다시 입력으로 넣는 과정을 여러번 반복하는 함수를 의미한다.</p>
+<p>Ref: <a class="link" href="https://en.wikipedia.org/wiki/Iterated_function"  target="_blank" rel="noopener"
+    >https://en.wikipedia.org/wiki/Iterated_function</a></p>
+</blockquote>
+<h2 id="naive-algorithm">Naive algorithm</h2>
+<p>가장 쉽게 구현할 수 있는 Cycle detection 알고리즘은 순환 주기에 속한 요소는 반복적으로 나타나는 특성을 이용하는 것이다. sequence가 종료되기 전까지 계속 x<sub>i</sub>를 키로 i 값을 해시 테이블에 저장하고, 이미 저장된 요소인지 확인한다. 이미 저장된 요소가 발견되면 순환이 존재하는 것이고, 이 요소는 순환이 처음 시작되는 위치에서 한번 순환 주기를 돌아 다시 나타난 요소이다. 따라서 인덱스는 μ+λ 일테니 해시 테이블에 이미 저장되어 있는 μ 값을 통해 λ을 구하면 된다.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">naive</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">x0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+</span></span><span class="line"><span class="cl">  <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">  <span class="n">x</span> <span class="o">=</span> <span class="n">x0</span>
+</span></span><span class="line"><span class="cl">  <span class="k">while</span> <span class="n">x</span> <span class="o">&amp;&amp;</span> <span class="n">x</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">hashTable</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">hashTable</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span>
+</span></span><span class="line"><span class="cl">    <span class="n">x</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="ow">not</span> <span class="n">x</span><span class="p">:</span>    <span class="c1"># there is no cycle</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">μ</span> <span class="o">=</span> <span class="n">hashTable</span><span class="p">[</span><span class="n">x</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">  <span class="n">λ</span> <span class="o">=</span> <span class="n">i</span> <span class="o">-</span> <span class="n">μ</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="n">μ</span><span class="p">,</span> <span class="n">λ</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>해시 테이블의 연산 속도를 O(1)이라고 하면 시간복잡도는 O(μ+λ)가 되고, 공간복잡도도 해시 테이블이 사용하는 만큼인 O(μ+λ)가 된다. 단방향 sequence에서 순환을 탐지하는데 걸리는 시간이 μ+λ에 비례하는 것은 충분히 합리적이지만, 공간복잡도도 μ+λ에 비례해서 커지는 것은 비효율적이다. 또한 μ+λ가 충분히 커지면 해시 테이블에 충돌이 발생할 수 있어 시간복잡도가 quadratic time이 될 수 있다. 이러한 단점을 극복하여 보다 적은 메모리를 사용하고, 함수 f의 호출 횟수나 연산 횟수를 줄여 시간을 단축시킬 수 있도록 고안된 게 Cycle detection 알고리즘이다.</p>
+<h2 id="floyds-cycle-finding-algorithm">Floyd&rsquo;s cycle-finding algorithm</h2>
+<p>Floyd&rsquo;s cycle-finding algorithm은 두 개의 포인터를 서로 다른 속도로 sequence를 반복하며 순환을 찾아 &ldquo;tortoise and the hare algorithm&quot;이라고도 불린다. 토끼와 거북이 우화와 토끼는 거북이에게 결국 역전당하지만, 이 알고리즘에서 totoise과 hare는 hare가 항상 앞서 간다는 의미로 사용된다. 여담으로 이 알고리즘을 캡틴 아메리카의 명대사인 &ldquo;on your left&quot;라고 표현한 LeetCode 베스트 댓글을 보고 더욱 잘 와닿았다.</p>
+<p><img src="/p/cycle-detection-in-a-sequence/captain.jpeg"
+	width="1280"
+	height="720"
+	srcset="/p/cycle-detection-in-a-sequence/captain_hucc4227c0d034aa4191bb76c2f8622ceb_157050_480x0_resize_q75_box.jpeg 480w, /p/cycle-detection-in-a-sequence/captain_hucc4227c0d034aa4191bb76c2f8622ceb_157050_1024x0_resize_q75_box.jpeg 1024w"
+	loading="lazy"
+	
+		alt="캡틴 아메리카: 윈터솔저 명장면"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="177"
+		data-flex-basis="426px"
+	
+></p>
+<p>본론으로 돌아와서 Floyd&rsquo;s cycle-finding algorithm의 핵심 인사이트는 다음과 같다. 순환이 존재하면 μ보다 큰 임의의 i에 대해 x<sub>i</sub> = x<sub>i + kλ</sub>를 만족하는 i가 존재함을 의미하므로, i=kλ &gt;= μ 인 경우 x<sub>i</sub> = x<sub>2i</sub>를 만족한다. 해당 식이 의미하는 대로 1번씩 진행되는 포인터(tortoise)와 2번씩 진행되는 포인터(hare)를 i=0부터 반복하며 x<sub>i</sub> = x<sub>2i</sub>를 만족하는 인덱스 v를 구하면 된다.</p>
+<p><img src="/p/cycle-detection-in-a-sequence/floyd.png"
+	width="1124"
+	height="640"
+	srcset="/p/cycle-detection-in-a-sequence/floyd_hucb5a5bee77e845a52196db80c0f0108f_35941_480x0_resize_box_3.png 480w, /p/cycle-detection-in-a-sequence/floyd_hucb5a5bee77e845a52196db80c0f0108f_35941_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="tortoise와 hare가 만난 지점 v"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="175"
+		data-flex-basis="421px"
+	
+></p>
+<p>두 포인터가 만난 인덱스 v에서 tortoise 포인터만 다시 시작점(i=0)으로 되돌린 후, 두 개의 포인터를 동시에 1번씩 진행하다 보면 같아지는 순간이 찾아오고, 그 지점이 바로 순환의 시작점(μ)이 된다. 왜 그럴 수 밖에 없는지 수식으로도 증명할 수 있지만, 직관적으로 이해하는게 좀 더 와닿을 것이다.</p>
+<ol>
+<li>v에서 λ의 배수만큼 진행하면 다시 v 위치로 돌아온다.</li>
+<li>v는 λ의 배수이므로, i=0인 지점에서 λ의 배수만큼 진행하다 보면 v 위치로 이동하게 된다.</li>
+</ol>
+<p>이는 i=0로 이동한 tortoise 포인터와 v에 위치한 hare 포인터가 같은 속도로 진행하는 상황이라면, v에서 다시 만나게 됨을 의미한다. 같은 속도로 진행하는 두 포인터가 순환 내 같은 위치에서 만난다는 것은, 순환에 진입한 순간부터 계속 같이 움직인다는 것이므로 두 포인터가 처음으로 같아질 때 까지의 진행 횟수를 구하면 μ가 된다 [A].  μ를 구했다면 x<sub>μ</sub>부터 반복하면서 x<sub>μ</sub>와 같은 값인 x<sub>μ+λ</sub>가 나올 때 까지의 진행 횟수를 구하면 순환의 크기인 λ가 된다 [B].</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">floyd</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">x0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">tortoise</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">x0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">hare</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">f</span><span class="p">(</span><span class="n">x0</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="k">while</span> <span class="n">tortoise</span> <span class="o">!=</span> <span class="n">hare</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">tortoise</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">tortoise</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">hare</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">f</span><span class="p">(</span><span class="n">hare</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1"># [A]</span>
+</span></span><span class="line"><span class="cl">    <span class="n">μ</span> <span class="o">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">    <span class="n">tortoise</span> <span class="o">=</span> <span class="n">x0</span>
+</span></span><span class="line"><span class="cl">    <span class="k">while</span> <span class="n">tortoise</span> <span class="o">!=</span> <span class="n">hare</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">tortoise</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">tortoise</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">hare</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">hare</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">μ</span> <span class="o">+=</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl"> 		
+</span></span><span class="line"><span class="cl">    <span class="c1"># [B]</span>
+</span></span><span class="line"><span class="cl">    <span class="n">λ</span> <span class="o">=</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">    <span class="n">hare</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">tortoise</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">while</span> <span class="n">tortoise</span> <span class="o">!=</span> <span class="n">hare</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">hare</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">hare</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">λ</span> <span class="o">+=</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl"> 
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">μ</span><span class="p">,</span> <span class="n">λ</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>v를 구하는 1번째 반복문에서 kλ만큼 반복, μ를 구하는 2번째 반복문은 μ만큼 반복, λ를 구하는 3번째 반복문에서 λ만큼 반복하므로 Floyd&rsquo;s cycle-finding algorithm의 시간복잡도는 O(μ+λ), 공간복잡도는 O(1)이다</p>
+<h2 id="brents-algorithm">Brent&rsquo;s algorithm</h2>
+<p>Brent&rsquo;s algorithm도 Floyd&rsquo;s cycle-finding algorithm과 비슷하게 두 개의 포인터를 서로 다른 속도로 sequence를 반복하며 순환을 찾는다. Brent&rsquo;s algorithm은 hare 포인터의 진행 속도가 2의 거듭 제곱(2<sup>i</sup>)으로 계속 늘어나며, tortoise 포인터는 진행하지 않고 hare 포인터가 거듭 제곱만큼 진행을 마친 값 x<sub>2<sup>i</sup>-1</sub>을 대입한다. 순환이 존재한다면 i가 커짐에 따라 tortoise 포인터는 순환 내부로 들어가게 될테고, 2<sup>i</sup>가 λ보다 커져 hare 포인터의 진행 과정에서 두 개의 포인터가 같아지는 경우가 발생하게 된다.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">brent</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">x0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">power</span> <span class="o">=</span> <span class="n">λ</span> <span class="o">=</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">    <span class="n">tortoise</span> <span class="o">=</span> <span class="n">x0</span>
+</span></span><span class="line"><span class="cl">    <span class="n">hare</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">x0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">while</span> <span class="n">tortoise</span> <span class="o">!=</span> <span class="n">hare</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="n">power</span> <span class="o">==</span> <span class="n">λ</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="n">tortoise</span> <span class="o">=</span> <span class="n">hare</span>
+</span></span><span class="line"><span class="cl">            <span class="n">power</span> <span class="o">*=</span> <span class="mi">2</span>
+</span></span><span class="line"><span class="cl">            <span class="n">λ</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># [A]</span>
+</span></span><span class="line"><span class="cl">        <span class="n">hare</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">hare</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">λ</span> <span class="o">+=</span> <span class="mi">1</span> <span class="c1"># [A]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1"># [B]</span>
+</span></span><span class="line"><span class="cl">    <span class="n">tortoise</span> <span class="o">=</span> <span class="n">hare</span> <span class="o">=</span> <span class="n">x0</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">λ</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="n">hare</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">hare</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">μ</span> <span class="o">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">    <span class="k">while</span> <span class="n">tortoise</span> <span class="o">!=</span> <span class="n">hare</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">tortoise</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">tortoise</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">hare</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">hare</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">μ</span> <span class="o">+=</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl"> 
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">μ</span><span class="p">,</span> <span class="n">λ</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>두 개의 포인터가 같아질 때 까지 hare 포인터가 진행한 횟수를 계산하면 순환의 크기(λ)를 바로 알아낼 수 있다 [A]. 순환의 크기를 알아냈다면 두 개의 포인터를 시작점인 i=0으로 되돌린 상태에서 hare 포인터만 λ만큼 진행한다. 그러면 두 개의 포인터의 거리 차이가 순환의 크기와 같아지므로, 이 상태에서 같은 속도로 1번씩 진행하며 처음 같아질 때 까지의 진행 횟수를 구하면 μ를 알 수 있다.</p>
+<p>Brent&rsquo;s algorithm은 iterated function 호출 횟수가 3번인 Floyd&rsquo;s cycle-finding algorithm보다 훨씬 적게 1번만 호출하는 장점이 있고, λ를 곧바로 구할 수 있어 λ, μ를 구하는 과정이 더 단순하다. 싱글 링크드 리스트에서 iterated function은 포인터 연산을 통해 next 주소를 구하는 연산을 수행하므로 함수 호출 횟수가 줄어들수록 성능은 올라간다. 그래서 Floyd&rsquo;s cycle-finding algorithm보다 보통 36% 정도 빠른 벤치마크 성능을 갖는다고 한다.</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>이번 포스트에서는 iterated function을 통해 생성한 sequence 내 순환을 찾는 알고리즘을 살펴봤다. Floyd&rsquo;s cycle-finding algorithm과 Brent&rsquo;s algorithm 모두 투 포인터 알고리즘을 통해 O(n)의 시간복잡도와 O(1)의 공간복잡도로 순환을 찾을 수 있었다. 알고리즘에 들어간 핵심 아이디어는 복잡하지 않는데, 나는 왜 처음 LeetCode 문제를 풀 때 떠올리지 못했을까 하며 아쉬웠다. 내 지능이 부족한건지 알고리즘를 배우면서 창의적인 아이디어를 구상하는 연습이 부족했던건지 몰라도, 후자라고 생각하고 계속 연습해보려고 한다&hellip;</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "truealarm-github-io" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2022 - 
+        
+        2023 True Alarm
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.16.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

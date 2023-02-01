@@ -7,11 +7,11 @@
         <generator>Hugo -- gohugo.io</generator>
         <language>en-us</language>
         <lastBuildDate>Fri, 20 Jan 2023 14:36:42 +0900</lastBuildDate><atom:link href="https://truealarm.github.io/categories/oop/index.xml" rel="self" type="application/rss+xml" /><item>
-        <title>Today I Learnd: 캡슐화(Encapsulation)</title>
-        <link>https://truealarm.github.io/p/today-i-learnd-%EC%BA%A1%EC%8A%90%ED%99%94encapsulation/</link>
+        <title>캡슐화(Encapsulation)</title>
+        <link>https://truealarm.github.io/p/%EC%BA%A1%EC%8A%90%ED%99%94encapsulation/</link>
         <pubDate>Fri, 20 Jan 2023 14:36:42 +0900</pubDate>
         
-        <guid>https://truealarm.github.io/p/today-i-learnd-%EC%BA%A1%EC%8A%90%ED%99%94encapsulation/</guid>
+        <guid>https://truealarm.github.io/p/%EC%BA%A1%EC%8A%90%ED%99%94encapsulation/</guid>
         <description>&lt;p&gt;기본적인 개념에 대한 글을 머리속으로 슥슥 읽으면 이해했다는 느낌을 받아도 막상 누군가에게 설명하려고 하면 쉽지 않다. 조리 있게 말하는 언어적 능력이나 논리정연하게 서술하는 것에 익숙하지 않아 그럴 수도 있지만, 완벽히 이해하지 못했을 가능성이 크다. 사실 어느 쪽이 문제인지 상관없이 다른 사람에게 어려운 개념을 이해하기 쉽게 설명할 수 있는 능력은 개발자에게 정말 중요하다고 생각한다. 가벼운 내용이라도 하루에 최소 한번 씩 오늘 읽은 글을 정리하고, 내 언어로 좀 더 쉽게 재가공해보려고 한다. 이번에는 Object-oriented programming 언어의 핵심 개념인 캡슐화(Encapsulation)를 다룬다.&lt;/p&gt;
 &lt;h2 id=&#34;meaning&#34;&gt;Meaning&lt;/h2&gt;
 &lt;p&gt;객체 지향 프로그래밍(Object-oriented programming) 언어에서 Encapsulation은 크게 2가지 의미를 내포한다.&lt;/p&gt;

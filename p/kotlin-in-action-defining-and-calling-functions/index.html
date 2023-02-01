@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='이전 포스트인 Kotlin in Action: What and Why에 이어 Kotlin in Action 책의 Chapter 3를 읽고 정리한 포스트이다. 다시 정리하면서 기억하고 싶은 내용, 다른 언어에선 보지 못했던 생소한 개념만 설명하므로 전체 내용은 책을 참고하면 된다.
+Named and Default parameter Kotlin은 Java에서 지원하지 않는 Named parameter와 Default parameter를 기본적으로 지원한다. Named parameter 사용은 함수의 정의나 선언에 별다른 추가 코드가 필요없고, 함수를 호출하면서 parameter = value 형식으로 인자를 전달해주면 된다.
+1 joinToString(arr, separator = &amp;#34;, &amp;#34;, prefix =&amp;#34;&amp;lt;&amp;#34;, postfix = &amp;#34;&amp;gt;&amp;#34;) Default parameter는 여타 다른 언어와 마찬가지로 함수를 선언하면서 parameter 옆에 initial value를 지정하면 된다.'>
+<title>Kotlin in Action: Defining and calling functions</title>
+
+<link rel='canonical' href='https://truealarm.github.io/p/kotlin-in-action-defining-and-calling-functions/'>
+
+<link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='Kotlin in Action: Defining and calling functions'>
+<meta property='og:description' content='이전 포스트인 Kotlin in Action: What and Why에 이어 Kotlin in Action 책의 Chapter 3를 읽고 정리한 포스트이다. 다시 정리하면서 기억하고 싶은 내용, 다른 언어에선 보지 못했던 생소한 개념만 설명하므로 전체 내용은 책을 참고하면 된다.
+Named and Default parameter Kotlin은 Java에서 지원하지 않는 Named parameter와 Default parameter를 기본적으로 지원한다. Named parameter 사용은 함수의 정의나 선언에 별다른 추가 코드가 필요없고, 함수를 호출하면서 parameter = value 형식으로 인자를 전달해주면 된다.
+1 joinToString(arr, separator = &amp;#34;, &amp;#34;, prefix =&amp;#34;&amp;lt;&amp;#34;, postfix = &amp;#34;&amp;gt;&amp;#34;) Default parameter는 여타 다른 언어와 마찬가지로 함수를 선언하면서 parameter 옆에 initial value를 지정하면 된다.'>
+<meta property='og:url' content='https://truealarm.github.io/p/kotlin-in-action-defining-and-calling-functions/'>
+<meta property='og:site_name' content='True Alarm'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2023-02-01T19:50:08&#43;09:00'/><meta property='article:modified_time' content='2023-02-01T19:50:08&#43;09:00'/>
+<meta name="twitter:title" content="Kotlin in Action: Defining and calling functions">
+<meta name="twitter:description" content="이전 포스트인 Kotlin in Action: What and Why에 이어 Kotlin in Action 책의 Chapter 3를 읽고 정리한 포스트이다. 다시 정리하면서 기억하고 싶은 내용, 다른 언어에선 보지 못했던 생소한 개념만 설명하므로 전체 내용은 책을 참고하면 된다.
+Named and Default parameter Kotlin은 Java에서 지원하지 않는 Named parameter와 Default parameter를 기본적으로 지원한다. Named parameter 사용은 함수의 정의나 선언에 별다른 추가 코드가 필요없고, 함수를 호출하면서 parameter = value 형식으로 인자를 전달해주면 된다.
+1 joinToString(arr, separator = &amp;#34;, &amp;#34;, prefix =&amp;#34;&amp;lt;&amp;#34;, postfix = &amp;#34;&amp;gt;&amp;#34;) Default parameter는 여타 다른 언어와 마찬가지로 함수를 선언하면서 parameter 옆에 initial value를 지정하면 된다.">
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/flappy1000_hu1c66c531ae5bca477a9190a15e605814_6192_300x0_resize_box_3.png" width="300"
+                            height="273" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">True Alarm</a></h1>
+            <h2 class="site-description">Will be a person who can explain difficult concepts easily and easy concepts in detail.</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/truealarm'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://twitter.com/404'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>Archives</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>Search</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>Dark Mode</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">Table of contents</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#named-and-default--parameter">Named and Default  parameter</a>
+      <ol>
+        <li><a href="#jvmoverloads">@JvmOverloads</a></li>
+      </ol>
+    </li>
+    <li><a href="#top-level-functions-and-properties">Top-level functions and properties</a>
+      <ol>
+        <li><a href="#top-level-properties">Top-level properties</a></li>
+        <li><a href="#compile-time-constants">Compile-time constants</a></li>
+      </ol>
+    </li>
+    <li><a href="#extension-functions-and-properties">Extension functions and properties</a>
+      <ol>
+        <li><a href="#extension-under-the-hood">Extension under the hood</a></li>
+        <li><a href="#extension-properties">Extension properties</a></li>
+      </ol>
+    </li>
+    <li><a href="#varargs">Varargs</a></li>
+    <li><a href="#infx-calls-and-destructuring-declarations">Infx calls and destructuring declarations</a>
+      <ol>
+        <li><a href="#destructuring-declarations">destructuring declarations</a></li>
+      </ol>
+    </li>
+    <li><a href="#local-functions-and-extensions">local functions and extensions</a></li>
+    <li><a href="#conclusion">Conclusion</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/kotlin/" >
+                Kotlin
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/kotlin-in-action-defining-and-calling-functions/">Kotlin in Action: Defining and calling functions</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Feb 01, 2023</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    9 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>이전 포스트인 <a class="link" href="https://truealarm.github.io/p/kotlin-in-action-what-and-why/"  target="_blank" rel="noopener"
+    >Kotlin in Action: What and Why</a>에 이어 Kotlin in Action 책의 Chapter 3를 읽고 정리한 포스트이다. 다시 정리하면서 기억하고 싶은 내용, 다른 언어에선 보지 못했던 생소한 개념만 설명하므로 전체 내용은 책을 참고하면 된다.</p>
+<h2 id="named-and-default--parameter">Named and Default  parameter</h2>
+<p>Kotlin은 Java에서 지원하지 않는 Named parameter와 Default parameter를 기본적으로 지원한다. Named parameter 사용은 함수의 정의나 선언에 별다른 추가 코드가 필요없고, 함수를 호출하면서 <code>parameter = value</code> 형식으로 인자를 전달해주면 된다.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="n">joinToString</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">separator</span> <span class="p">=</span> <span class="s2">&#34;, &#34;</span><span class="p">,</span> <span class="n">prefix</span> <span class="p">=</span><span class="s2">&#34;&lt;&#34;</span><span class="p">,</span> <span class="n">postfix</span> <span class="p">=</span> <span class="s2">&#34;&gt;&#34;</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>Default parameter는 여타 다른 언어와 마찬가지로 함수를 선언하면서 parameter 옆에 initial value를 지정하면 된다.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="k">fun</span> <span class="p">&lt;</span><span class="nc">T</span><span class="p">&gt;</span> <span class="nf">joinToString</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="n">arr</span><span class="p">:</span> <span class="n">Collection</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">separator</span><span class="p">:</span> <span class="n">String</span> <span class="p">=</span> <span class="s2">&#34;, &#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">prefix</span><span class="p">:</span> <span class="n">String</span> <span class="p">=</span> <span class="s2">&#34;&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">postfix</span><span class="p">:</span> <span class="n">String</span> <span class="p">=</span> <span class="s2">&#34;&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">):</span> <span class="n">String</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="jvmoverloads">@JvmOverloads</h3>
+<p>Java에는 Default parameter라는 개념이 없기 때문에, Default Parameter를 사용한 Kotlin 함수를 Java에서 호출할 때 모든 인자를 명시적으로 지정해줘야 한다. 하지만 <code>@JvmOverloads</code> 어노테이션을 추가하면 Java에서도 Default Parameter가 설정된 함수를 자연스럽게 호출할 수 있다. <code>@JvmOverloads</code> 어노테이션을 추가된 함수는 자동으로 Default Parameter 별로 함수가 오버로딩되어, Default parameter는 함수의 정의에서 초기 값으로 설정되는 것이다.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="cm">/* Java */</span>
+</span></span><span class="line"><span class="cl"><span class="n">String</span> <span class="nf">joinToString</span><span class="o">(</span><span class="n">Collection</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">collection</span><span class="o">,</span> <span class="n">String</span> <span class="n">separator</span><span class="o">,</span> <span class="n">String</span> <span class="n">prefix</span><span class="o">,</span> <span class="n">String</span> <span class="n">postfix</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">String</span> <span class="nf">joinToString</span><span class="o">(</span><span class="n">Collection</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">collection</span><span class="o">,</span> <span class="n">String</span> <span class="n">separator</span><span class="o">,</span> <span class="n">String</span> <span class="n">prefix</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">String</span> <span class="nf">joinToString</span><span class="o">(</span><span class="n">Collection</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">collection</span><span class="o">,</span> <span class="n">String</span> <span class="n">separator</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">String</span> <span class="nf">joinToString</span><span class="o">(</span><span class="n">Collection</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">collection</span><span class="o">);</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="top-level-functions-and-properties">Top-level functions and properties</h2>
+<p>Java나 C++로 객체지향 프로그래밍을 하며 객체와 관련된 모든 메소드, 프로퍼티를 인스턴스에 포함시키지만, 어디에 포함시켜야 할 지 명확하지 않은 경우가 있다. 2개 이상의 객체에서 사용되고 제너럴한 기능이라 특정 인스턴스에 포함시키기 애매한 경우이다. 예를 들어 Custom 문자열 연산자나 URL, Path 파서 등 흔히 Utill 클래스, Helper 클래스로 분류되는 기능들이 있다.</p>
+<p>이런 경우에 Java나 다른 언어에서는 보통 별도의 Util 클래스를 만들고, static 메소드로 선언하여 사용하는게 일반적이다. 반면에 Kotlin은 형식적인 클래스 없이 소스 코드의 최상위 레벨에 선언한 함수나 프로퍼티를 바로 사용할 수 있다. 아래의 코드처럼 strings 패키지로 선언된 파일(join.kt)에 최상위 레벨에 선언된 <code>joinToString</code> 함수를 바로 import해서 바로 사용할 수 있다.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="c1">// join.kt
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">package</span> <span class="nn">strings</span>
+</span></span><span class="line"><span class="cl"><span class="k">fun</span> <span class="nf">joinToString</span><span class="p">(</span><span class="o">..</span><span class="p">.):</span> <span class="n">String</span> 
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="c1">// main.kt
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">import</span> <span class="nn">strings.joinToString</span>
+</span></span><span class="line"><span class="cl"><span class="n">joinToString</span><span class="p">(</span><span class="o">..</span><span class="p">.)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>참고로 kotlin의 top level 함수는 Java에서 파일 이름과 일치하는 클래스 안에 static으로 선언된 함수로 변환된다.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="cm">/* Java */</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// @file:JvmName(&#34;StringUtils&#34;)		[A]
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kn">package</span> <span class="nn">strings</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">JoinKt</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kd">static</span> <span class="n">String</span> <span class="nf">joinToString</span><span class="o">(...)</span> <span class="o">{</span> <span class="o">...</span> <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>파일 이름으로 자동 생성되는 클래스 명을 바꾸고 싶으면 <code>@JvmName</code> 어노테이션으로 변경할 수 있다 [A].</p>
+<h3 id="top-level-properties">Top-level properties</h3>
+<p>함수와 마찬가지로 데이터를 저장하는 프로퍼티도 최상위 레벨에 정의할 수 있다.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="k">var</span> <span class="py">operationCount</span> <span class="p">=</span> <span class="m">0</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">fun</span> <span class="nf">performOperation</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">operationCount</span><span class="o">++</span>
+</span></span><span class="line"><span class="cl">    <span class="o">..</span><span class="p">.</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">fun</span> <span class="nf">reportOperationStatus</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">println</span><span class="p">(</span><span class="s2">&#34;Operation performed </span><span class="si">$operationCount</span><span class="s2"> times&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>var로 선언되면 읽기, 쓰기 모두 가능하고 val로 선언된 프로퍼티는 읽기만 가능하다. 최상위 레벨에 정의된 프로퍼티는 다른 프로퍼티와 마찬가지로 결국 accessor 메소드를 통해 접근하게 된다. 그래서 Java 코드로 변환된 이후에는 get, set 메소드로 추상화된 인터페이스가 자동으로 추가되어 이를 통해 값에 접근하게 된다. accessor가 아닌 상수값이 바로 저장되고, 접근하고 싶다면 <code>const</code> 를 추가하면 된다.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="k">const</span> <span class="k">val</span> <span class="py">UNIX</span><span class="n">_LINE_SEPARATOR</span> <span class="p">=</span> <span class="s2">&#34;</span><span class="se">\n</span><span class="s2">&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="cm">/* Java */</span>
+</span></span><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">UNIX_LINE_SEPARATOR</span> <span class="o">=</span> <span class="s">&#34;\n&#34;</span><span class="o">;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>const</code>가 적용된 변수는 Java의 <code>static</code> 속성이 추가된다.</p>
+<h3 id="compile-time-constants">Compile-time constants</h3>
+<p>val 변수의 초기화는 runtime에 이루어지는 반면, const val 변수는 컴파일 타임에 결정되는 상수이다. 그래서 val 변수는 프로그램의 실행 흐름에 따라 초기화되는 값이 달라질 수 있지만, const val는 컴파일 타임에 결정되므로 <strong>완전한 불변성</strong>을 갖는다.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="k">val</span> <span class="py">foo</span> <span class="p">=</span> <span class="n">func</span><span class="p">()</span> <span class="c1">// ok
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">const</span> <span class="k">val</span> <span class="py">foo</span> <span class="p">=</span> <span class="n">func</span><span class="p">()</span> <span class="c1">// not ok
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">const</span> <span class="k">val</span> <span class="py">foo</span> <span class="p">=</span> <span class="s2">&#34;foo&#34;</span> <span class="c1">// ok
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>컴파일 타임에 초기화되는 값을 결정할 수 있어야 하므로, 아래와 같은 사항을 만족하는 경우만 const를 사용할 수 있다. (<a class="link" href="https://kotlinlang.org/docs/properties.html#compile-time-constants"  target="_blank" rel="noopener"
+    >참고</a>)</p>
+<ul>
+<li>top-level 프로퍼티나 object 혹은 companion object의 멤버</li>
+<li>primitive type 혹은 String 상수값으로 초기화</li>
+<li>custom getter가 불가능</li>
+</ul>
+<h2 id="extension-functions-and-properties">Extension functions and properties</h2>
+<p>Kotlin은 extension 컨셉을 통해 기존 코드를 수정하거나 변환하지 않고, 심지어 기존 코드의 구현을 신경쓰지 않고 새로운 기능을 추가할 수 있다. 이는 기존 Java 프로젝트에 Kotlin 프로젝트을 통합할 때, 굳이 Kotlin 코드로 전부 변환하지 않고, Kotlin의 모든 장점을 활용할 수 있도록 해준다.</p>
+<p>extension function은 기존 클래스가 정의된 위치가 아닌 외부에서 정의된 함수지만, 클래스에 포함되는 정적 함수이다. 그래서 기존 클래스가 제공하지 않지만, 해당 클래스와 연관된 custom 기능을 추가할 때 사용한다.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="k">package</span> <span class="nn">strings</span>
+</span></span><span class="line"><span class="cl"><span class="k">fun</span> <span class="nf">String</span><span class="p">.</span><span class="n">lastChar</span><span class="p">():</span> <span class="n">Char</span> <span class="p">=</span> <span class="k">this</span><span class="p">.</span><span class="k">get</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="n">length</span> <span class="p">-</span> <span class="m">1</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&gt;&gt;&gt; println(&#34;Kotlin&#34;.lastChar())
+</span></span><span class="line"><span class="cl">n
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>위 코드에서 기존 클래스의 타입을 &ldquo;receiver type&rdquo;, <code>this</code>가 가리키는 실제 객체를 &ldquo;receiver object&quot;라고 말한다. 참고로 함수 정의에서 this는 생략할 수 있다.</p>
+<p>extension의 컨셉만 이해하면 String 클래스가 어떤 JVM 언어로 작성되었는지나 구현체를 전혀 신경쓰지 않고도 나만의 함수를 추가할 수 있는 것이다. <code>StringUtils</code>, <code>NumberUtils</code> 같은 Util 클래스와는 이제 작별하고 extension을 사용하여 더욱 가독성 높은 코드를 짜보자.</p>
+<h3 id="extension-under-the-hood">Extension under the hood</h3>
+<p>extension function은 기존 클래스에 멤버로 포함되는게 아니라서 private, protected 멤버에 접근하지 못하니 캡슐화가 깨질 걱정은 하지 않아도 된다. 문법만 보면 기존 클래스에 추가되는 것처럼 보이지만, 실제로는 별도의 클래스에 receiver object를 첫 번째 인자로 받는 static 함수로 변환된다. Kotlin의 힘으로 마치 기존 클래스를 확장한 것처럼 가독성 높은 코드를 작성할 수 있는 것 뿐이다.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="cm">/* Java */</span>
+</span></span><span class="line"><span class="cl"><span class="kt">char</span> <span class="n">c</span> <span class="o">=</span> <span class="n">StringUtilKt</span><span class="o">.</span><span class="na">lastChar</span><span class="o">(</span><span class="s">&#34;Kotlin&#34;</span><span class="o">);</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>그래서 부모와 자식 클래스에 각각 같은 이름으로 extension function을 추가해도 오버라이딩이 적용되지 않아 다형성을 가질 수 없다.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="k">fun</span> <span class="nf">View</span><span class="p">.</span><span class="n">showOff</span><span class="p">()</span> <span class="p">=</span> <span class="n">println</span><span class="p">(</span><span class="s2">&#34;I&#39;m a view!&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">fun</span> <span class="nf">Button</span><span class="p">.</span><span class="n">showOff</span><span class="p">()</span> <span class="p">=</span> <span class="n">println</span><span class="p">(</span><span class="s2">&#34;I&#39;m a button!&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">&gt;&gt;&gt;</span> <span class="k">val</span> <span class="py">view</span><span class="p">:</span> <span class="n">View</span> <span class="p">=</span> <span class="n">Button</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">&gt;&gt;&gt;</span> <span class="n">view</span><span class="p">.</span><span class="n">showOff</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="s2">&#34;I&#39;m a view!&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>위 예시의 extension function인 <code>showOff()</code>는 부모, 자식 클래스에 모두 정의되어 있지만, extension function은 사실 클래스 멤버 함수가 아닌 별도의 클래스에 정의된 정적 함수에 불과하므로 컴파일 타임에 호출되는 함수가 결정된다. 오버라이딩 되는게 아니므로 runtime에서 객체의 실제 타입에 따라 호출되는 함수를 결정하는게 애초에 불가능한 것이다.</p>
+<blockquote>
+<p>📝 <strong>Note</strong></p>
+<p>만약 클래스 멤버 함수와 extension 함수가 동일한 시그니처인 함수로 정의된다면, 멤버 함수가 우선적으로 호출된다. extension 함수를 추가할 때 기존 멤버 함수와 동일한 시그니처가 있다면 프로그램의 실행 흐름이 달라질 수 있으니 유의해야 한다.</p>
+</blockquote>
+<h3 id="extension-properties">Extension properties</h3>
+<p>Extension properties는 property 문법으로 정의된 extension이라, 함수를 호출하는 코드가 필요없다.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="k">val</span> <span class="py">String</span><span class="p">.</span><span class="n">lastChar</span><span class="p">:</span> <span class="n">Char</span>
+</span></span><span class="line"><span class="cl"><span class="k">get</span><span class="p">()</span> <span class="p">=</span> <span class="k">get</span><span class="p">(</span><span class="n">length</span> <span class="p">-</span> <span class="m">1</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="p">&gt;&gt;&gt;</span> <span class="n">println</span><span class="p">(</span><span class="s2">&#34;Kotlin&#34;</span><span class="p">.</span><span class="n">lastChar</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">n</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>extension function과 마찬가지로 정적 클래스에 정의된 accessor로 변환되기 때문에, 기존 클래스의 멤버로 포함되지 않는다. 그래서 state나 추가적인 필드를 가질 수 없는 것이 특징이다.</p>
+<h2 id="varargs">Varargs</h2>
+<p>Kotlin에서 임의의 개수의 인자를 갖는 가변 인자 함수는 인자 이름 앞에 <code>vararg</code> modifier만 추가하면 된다. 아래는 인자로 전달된 가변 인자를 리스트로 생성하는 <code>listOf</code>의 정의이다. 인자 앞에 <code>vararg</code>만 추가된 것을 확인할 수 있다.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="k">val</span> <span class="py">list</span> <span class="p">=</span> <span class="n">listOf</span><span class="p">(</span><span class="m">2</span><span class="p">,</span> <span class="m">3</span><span class="p">,</span> <span class="m">5</span><span class="p">,</span> <span class="m">7</span><span class="p">,</span> <span class="m">11</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="k">fun</span> <span class="nf">listOf</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;(</span><span class="k">vararg</span> <span class="n">values</span><span class="p">:</span> <span class="n">T</span><span class="p">):</span> <span class="n">List</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;</span> <span class="p">{</span> <span class="o">..</span><span class="p">.</span> <span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>반대로 가변 인자 함수에 이미 리스트로 묶인 값을 한번에 전달할 때는 speread operator를 사용한다.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="k">fun</span> <span class="nf">main</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="n">Array</span><span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="py">list</span> <span class="p">=</span> <span class="n">listOf</span><span class="p">(</span><span class="s2">&#34;args: &#34;</span><span class="p">,</span> <span class="p">*</span><span class="n">args</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">println</span><span class="p">(</span><span class="n">list</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="infx-calls-and-destructuring-declarations">Infx calls and destructuring declarations</h2>
+<p>Kotlin에서 Key-Value 쌍을 갖는 맵을 생성할 때 <code>mapOf</code> 함수와 <code>to</code> 키워드를 사용한다.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="k">val</span> <span class="py">map</span> <span class="p">=</span> <span class="n">mapOf</span><span class="p">(</span><span class="m">1</span> <span class="n">to</span> <span class="s2">&#34;one&#34;</span><span class="p">,</span> <span class="m">7</span> <span class="n">to</span> <span class="s2">&#34;seven&#34;</span><span class="p">,</span> <span class="m">53</span> <span class="n">to</span> <span class="s2">&#34;fifty-three&#34;</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>이때 사용하는 <code>to</code>는 Key-Value 쌍을 생성하는 빌트인 연산자가 아닌, infix로 선언된 메소드를 호출할 때 사용하는 문법이다. aka. infix call</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="m">1.</span><span class="n">to</span><span class="p">(</span><span class="s2">&#34;one&#34;</span><span class="p">)</span>  <span class="c1">// [A] calling method
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="m">1</span> <span class="n">to</span> <span class="s2">&#34;one&#34;</span>   <span class="c1">// [B] infix call
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>위 [A], [B] 코드는 같은 기능을 수행하는 코드지만, [B]는 infix 표기법으로 <code>infix</code> modifier가 붙은 메소드에만 사용할 수 있는 문법이다. 그래서 Key-Value 쌍을 만드는 <code>to</code> 메소드의 정의를 간단히 표현하면 다음과 같다.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="k">infix</span> <span class="k">fun</span> <span class="nf">Any</span><span class="p">.</span><span class="n">to</span><span class="p">(</span><span class="n">other</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="p">=</span> <span class="n">Pair</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="destructuring-declarations">destructuring declarations</h3>
+<p>Pair와 같이 데이터 멤버로 struct된 data class 객체를 여러 개의 변수로 다시 destruct하는 문법을 <em>destructuring declaration</em>라고 부른다.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="k">val</span> <span class="err">(</span><span class="py">key</span><span class="p">,</span> <span class="k">value</span><span class="p">)</span> <span class="p">=</span> <span class="m">0</span> <span class="n">to</span> <span class="s2">&#34;zero&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>Pair 클래스 뿐만 아니라 <code>withIndex()</code>로 생성된 Iterator에서 유용하게 사용된다.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="k">for</span> <span class="p">((</span><span class="n">index</span><span class="p">,</span> <span class="n">element</span><span class="p">)</span> <span class="k">in</span> <span class="n">collection</span><span class="p">.</span><span class="n">withIndex</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">println</span><span class="p">(</span><span class="s2">&#34;</span><span class="si">$index</span><span class="s2">: </span><span class="si">$element</span><span class="s2">&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>반환값이 여러 개인 함수는 <code>Pair</code>, <code>Triple</code> 클래스와 destructuring declaration를 통해 쉽게 구현할 수 있다. 근데 순서와 관계없이 의도한 변수에 할당될 수 있도록, data class를 직접 선언하여 named return value를 사용하는 것이 좋다 [A].</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="k">data</span> <span class="k">class</span> <span class="nc">Result</span><span class="p">(</span><span class="k">val</span> <span class="py">result</span><span class="p">:</span> <span class="n">Int</span><span class="p">,</span> <span class="k">val</span> <span class="py">status</span><span class="p">:</span> <span class="n">Status</span><span class="p">)</span> <span class="c1">// [A]
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">fun</span> <span class="nf">func</span><span class="p">(</span><span class="o">..</span><span class="p">.):</span> <span class="n">Result</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="o">..</span><span class="p">.</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// return Pair(result, status)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">return</span> <span class="n">Result</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">status</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">val</span> <span class="err">(</span><span class="py">result</span><span class="p">,</span> <span class="n">status</span><span class="p">)</span> <span class="p">=</span> <span class="n">func</span><span class="p">(</span><span class="o">..</span><span class="p">.)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="local-functions-and-extensions">local functions and extensions</h2>
+<p>우리 모두 처음부터 깔끔한 코드를 구현하고 싶어 하지만, 한번에 완벽한 코드를 작성하는건 쉽지 않다. 구현한 코드가 정상적으로 작동하는 동시에 깔끔한 코드로 구현하는 경지는 수많은 반복과 경험을 통해 도달 가능하다고 생각한다. 그래서 나는 일단 코드를 최대한 깔끔하게 만들어 놓고, 여러번 코드를 다시 읽어보며 개선할 점이 있는지 찾는 방식으로 리팩토링을 했던 것 같다.</p>
+<p>그 중에 반복되는 코드를 줄이는 Don&rsquo;t Repeat Yourself (DRY) 원칙만 지켜도, 재사용 되는 코드가 늘어나 불필요하게 프로그램이 커지는 걸 방지할 수 있다. 예를 들어 비대한 크기의 함수에서 기능/목적 별로 쪼개거나, 다른 함수에서도 공통적으로 사용하는 코드가 존재한다면 별도의 메소드로 묶어 재사용할 수 있다.</p>
+<p>그런데 너무 잘게 쪼개면, 분리된 메소드 간 관계를 파악하기 힘들어져 오히려 가독성이 떨어질 수 있다. 그래서 연관 있는 메소드를 하나의 클래스로 묶어 관리할 수 있지만, 그룹화 하는 과정에서 늘어나는 형식적인 코드도 무시할 수 없다.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="k">fun</span> <span class="nf">saveUser</span><span class="p">(</span><span class="n">user</span><span class="p">:</span> <span class="n">User</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">user</span><span class="p">.</span><span class="n">name</span><span class="p">.</span><span class="n">isEmpty</span><span class="p">())</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">throw</span> <span class="n">IllegalArgumentException</span><span class="p">(</span><span class="s2">&#34;Cannot save user </span><span class="si">${user.id}</span><span class="s2">: Name is empty&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">user</span><span class="p">.</span><span class="n">address</span><span class="p">.</span><span class="n">isEmpty</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">throw</span> <span class="n">IllegalArgumentException</span><span class="p">(</span><span class="s2">&#34;Cannot save user </span><span class="si">${user.id}</span><span class="s2">: Address is empty&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// Save user to the database
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="o">..</span><span class="p">.</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>위 예시처럼 user 정보를 데이터베이스에 저장하기 전에, 형식 검사와 같은 간단한 validation 로직이 반복되는 경우가 있을 수 있다. validation 로직이 훨씬 많아진다면, <code>saveUser()</code> 함수의 핵심 로직이 어디에 있고, 무엇인지 알아채기 힘들어진다.</p>
+<p>Kotlin에서는 local function을 통해 형식적인 코드를 최소화하고, 코드 분리를 통해 반복되는 코드를 줄일 수 있다.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">User</span><span class="p">(</span><span class="k">val</span> <span class="py">id</span><span class="p">:</span> <span class="n">Int</span><span class="p">,</span> <span class="k">val</span> <span class="py">name</span><span class="p">:</span> <span class="n">String</span><span class="p">,</span> <span class="k">val</span> <span class="py">address</span><span class="p">:</span> <span class="n">String</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">fun</span> <span class="nf">saveUser</span><span class="p">(</span><span class="n">user</span><span class="p">:</span> <span class="n">User</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">fun</span> <span class="nf">validate</span><span class="p">(</span><span class="k">value</span><span class="p">:</span> <span class="n">String</span><span class="p">,</span> <span class="n">fieldName</span><span class="p">:</span> <span class="n">String</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="k">value</span><span class="p">.</span><span class="n">isEmpty</span><span class="p">())</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">throw</span> <span class="n">IllegalArgumentException</span><span class="p">(</span><span class="s2">&#34;Can&#39;t save user </span><span class="si">${user.id}</span><span class="s2">:&#34;</span> <span class="p">+</span>
+</span></span><span class="line"><span class="cl">                                            <span class="s2">&#34;</span><span class="si">$fieldName</span><span class="s2"> is empty&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="n">validate</span><span class="p">(</span><span class="n">user</span><span class="p">.</span><span class="n">name</span><span class="p">,</span> <span class="s2">&#34;Name&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">validate</span><span class="p">(</span><span class="n">user</span><span class="p">.</span><span class="n">address</span><span class="p">,</span> <span class="s2">&#34;Address&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// Save user to the database
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="o">..</span><span class="p">.</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>saveUser</code> 함수안에 <code>validate</code> 함수를 중첩하여 정의하면, 중첩된 함수에서는 바깥 함수의 인자나 변수에 모두 접근할 수 있어, 중복 코드를 줄이는데 아주 유용하다. 여기에 extension을 적용하면 더욱 가독성 높은 코드로 만들 수 있다.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">User</span><span class="p">(</span><span class="k">val</span> <span class="py">id</span><span class="p">:</span> <span class="n">Int</span><span class="p">,</span> <span class="k">val</span> <span class="py">name</span><span class="p">:</span> <span class="n">String</span><span class="p">,</span> <span class="k">val</span> <span class="py">address</span><span class="p">:</span> <span class="n">String</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">fun</span> <span class="nf">User</span><span class="p">.</span><span class="n">validateBeforeSave</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">fun</span> <span class="nf">validate</span><span class="p">(</span><span class="k">value</span><span class="p">:</span> <span class="n">String</span><span class="p">,</span> <span class="n">fieldName</span><span class="p">:</span> <span class="n">String</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="k">value</span><span class="p">.</span><span class="n">isEmpty</span><span class="p">())</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">throw</span> <span class="n">IllegalArgumentException</span><span class="p">(</span><span class="s2">&#34;Can&#39;t save user </span><span class="si">${user.id}</span><span class="s2">:&#34;</span> <span class="p">+</span>
+</span></span><span class="line"><span class="cl">                                            <span class="s2">&#34;</span><span class="si">$fieldName</span><span class="s2"> is empty&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="n">validate</span><span class="p">(</span><span class="n">user</span><span class="p">.</span><span class="n">name</span><span class="p">,</span> <span class="s2">&#34;Name&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">validate</span><span class="p">(</span><span class="n">user</span><span class="p">.</span><span class="n">address</span><span class="p">,</span> <span class="s2">&#34;Address&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">fun</span> <span class="nf">saveUser</span><span class="p">(</span><span class="n">user</span><span class="p">:</span> <span class="n">User</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">user</span><span class="p">.</span><span class="n">validateBeforeSave</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// Save user to the database
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="o">..</span><span class="p">.</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>validation 로직을 전부 User 클래스의 extension function으로 빼는 것이다. 여기서 주목할 점은 extension을 기존 라이브러리를 확장하는 용도 뿐만 아니라 내가 만든 클래스에도 활용할 수 있는 점이다. validation 로직은 <code>saveUser</code> 함수에서 필요한 기능이라 User 클래스 자체에 포함하기 보다, <code>saveUser</code> 함수 근처에 따로 모아두면 validation 로직과 핵심 로직을 완벽하게 분리할 수 있어, 내가 원하는 코드를 바로바로 읽을 수 있다.</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>여기까지 Chapter 3를 읽고 중요하다고 생각한 내용을 다루어봤다. 다음 포스트에선 Chapter 4인 &ldquo;Classes, objects, and interfaces&quot;를 읽고 정리할 예정이다.</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">Related content</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/p/kotlin-in-action-what-and-why/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Kotlin in Action: What and Why</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "truealarm-github-io" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2022 - 
+        
+        2023 True Alarm
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.16.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

@@ -90,8 +90,8 @@
 		data-flex-basis=&#34;426px&#34;
 	
 &gt;&lt;/p&gt;
-&lt;p&gt;본론으로 돌아와서 Floyd&amp;rsquo;s cycle-finding algorithm의 핵심 인사이트는 다음과 같다. 1번씩 진행되는 포인터(tortoise)와 2번씩 진행되는 포인터(hare)를 반복적으로 진행하면, tortoise와 hare의 거리가 1씩 벌어지게 된다. 순환이 존재한다면 두 포인터 모두 순환에 빠지게 될테고, 거리가 1씩 벌어지다 결국 hare가 tortoise를 앞지르게 될 것이다.&lt;/p&gt;
-&lt;p&gt;반복되는 sequence 길이인 순환의 크기를 λ라고 할 때 tortoise와 hare가 움직인 거리 차이는 kλ (k&amp;gt;=0)이다. hare의 이동 거리는 totorise의 2배이므로 거리 차이는 tortoise가 움직인 거리와 같다. 결국 tortoise의 현재 위치 v는 kλ가 된다.&lt;/p&gt;
+&lt;p&gt;본론으로 돌아와서 Floyd&amp;rsquo;s cycle-finding algorithm의 핵심 인사이트는 다음과 같다. 1번씩 진행되는 포인터(tortoise)와 2번씩 진행되는 포인터(hare)를 반복적으로 진행하면, tortoise와 hare의 거리가 1씩 벌어진다. 순환이 존재한다면 두 포인터 모두 순환에 빠질테고, 거리가 1씩 벌어지다 결국 hare와 tortoise가 같은 위치에 올 것이다.&lt;/p&gt;
+&lt;p&gt;반복되는 sequence의 최소 길이인 순환의 크기를 λ라고 할 때, tortoise와 hare가 움직인 거리 차이는 kλ (k&amp;gt;=0)이다. (hare가 이미 0번 이상 순환을 돌고 있었다는 뜻) hare의 이동 거리는 totorise의 2배이므로 거리 차이 kλ는 tortoise가 움직인 거리 v와 같다.&lt;/p&gt;
 &lt;p&gt;이를 수학적으로 다시 정리하면 다음과 같다. 순환의 시작점을 μ라고 할 때 μ보다 큰 임의의 인덱스 i에 대해 x&lt;sub&gt;i&lt;/sub&gt; = x&lt;sub&gt;i + kλ&lt;/sub&gt;를 만족하므로, x&lt;sub&gt;i&lt;/sub&gt; = x&lt;sub&gt;2i&lt;/sub&gt;를 만족하려면 i=kλ이여야 한다. x&lt;sub&gt;i&lt;/sub&gt; = x&lt;sub&gt;2i&lt;/sub&gt; 식이 의미하는 대로 1번씩 진행되는 포인터(tortoise)와 2번씩 진행되는 포인터(hare)를 i=0부터 반복하면 i=v=kλ에서 같은 위치에서 같아지게 되는 것이다.&lt;/p&gt;
 &lt;p&gt;&lt;img src=&#34;https://truealarm.github.io/p/cycle-detection-in-a-sequence/floyd.png&#34;
 	width=&#34;1124&#34;

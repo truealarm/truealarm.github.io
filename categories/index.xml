@@ -6,28 +6,20 @@
         <description>Recent content in Categories on True Alarm</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>en-us</language>
-        <lastBuildDate>Fri, 27 Jan 2023 21:05:32 +0900</lastBuildDate><atom:link href="https://truealarm.github.io/categories/index.xml" rel="self" type="application/rss+xml" /><item>
-        <title>Algorithm</title>
-        <link>https://truealarm.github.io/categories/algorithm/</link>
-        <pubDate>Fri, 27 Jan 2023 21:05:32 +0900</pubDate>
-        
-        <guid>https://truealarm.github.io/categories/algorithm/</guid>
-        <description></description>
-        </item>
-        <item>
+        <lastBuildDate>Wed, 01 Feb 2023 19:50:08 +0900</lastBuildDate><atom:link href="https://truealarm.github.io/categories/index.xml" rel="self" type="application/rss+xml" /><item>
         <title>Kotlin</title>
         <link>https://truealarm.github.io/categories/kotlin/</link>
-        <pubDate>Mon, 23 Jan 2023 21:14:32 +0900</pubDate>
+        <pubDate>Wed, 01 Feb 2023 19:50:08 +0900</pubDate>
         
         <guid>https://truealarm.github.io/categories/kotlin/</guid>
         <description></description>
         </item>
         <item>
-        <title>TIL</title>
-        <link>https://truealarm.github.io/categories/til/</link>
-        <pubDate>Mon, 23 Jan 2023 21:14:32 +0900</pubDate>
+        <title>Algorithm</title>
+        <link>https://truealarm.github.io/categories/algorithm/</link>
+        <pubDate>Fri, 27 Jan 2023 21:05:32 +0900</pubDate>
         
-        <guid>https://truealarm.github.io/categories/til/</guid>
+        <guid>https://truealarm.github.io/categories/algorithm/</guid>
         <description></description>
         </item>
         <item>

@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='데이터베이스는 여러 사람들이 이용할 정보를 체계적으로 통합하여 데이터로 저장 및 관리하는 시스템이다. 정보를 체계적으로 관리하는 곳이라면 거의 대부분 데이터베이스를 이용한다. 대표적으로 흔히 접할 수 있는 웹 서비스에서 이용자의 정보를 저장할 때나, 스마트폰, 클라우드, 온라인 게임 등 데이터베이스를 사용하는 곳은 정말 셀 수 없이 많다.
+단순히 파일 시스템을 통해 정보가 저장된 데이터의 집합도 데이터베이스라고 할 수 있지만, 데이터베이스에 따라 서비스의 성능, Throughput, Fault tolerance 등이 크게 달라지므로 어떻게 설계할 지는 정말 중요한 문제다.'>
+<title>Database Systems: Relational Model</title>
+
+<link rel='canonical' href='https://truealarm.github.io/p/database-systems-relational-model/'>
+
+<link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='Database Systems: Relational Model'>
+<meta property='og:description' content='데이터베이스는 여러 사람들이 이용할 정보를 체계적으로 통합하여 데이터로 저장 및 관리하는 시스템이다. 정보를 체계적으로 관리하는 곳이라면 거의 대부분 데이터베이스를 이용한다. 대표적으로 흔히 접할 수 있는 웹 서비스에서 이용자의 정보를 저장할 때나, 스마트폰, 클라우드, 온라인 게임 등 데이터베이스를 사용하는 곳은 정말 셀 수 없이 많다.
+단순히 파일 시스템을 통해 정보가 저장된 데이터의 집합도 데이터베이스라고 할 수 있지만, 데이터베이스에 따라 서비스의 성능, Throughput, Fault tolerance 등이 크게 달라지므로 어떻게 설계할 지는 정말 중요한 문제다.'>
+<meta property='og:url' content='https://truealarm.github.io/p/database-systems-relational-model/'>
+<meta property='og:site_name' content='True Alarm'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2023-02-02T16:41:20&#43;09:00'/><meta property='article:modified_time' content='2023-02-02T16:41:20&#43;09:00'/>
+<meta name="twitter:title" content="Database Systems: Relational Model">
+<meta name="twitter:description" content="데이터베이스는 여러 사람들이 이용할 정보를 체계적으로 통합하여 데이터로 저장 및 관리하는 시스템이다. 정보를 체계적으로 관리하는 곳이라면 거의 대부분 데이터베이스를 이용한다. 대표적으로 흔히 접할 수 있는 웹 서비스에서 이용자의 정보를 저장할 때나, 스마트폰, 클라우드, 온라인 게임 등 데이터베이스를 사용하는 곳은 정말 셀 수 없이 많다.
+단순히 파일 시스템을 통해 정보가 저장된 데이터의 집합도 데이터베이스라고 할 수 있지만, 데이터베이스에 따라 서비스의 성능, Throughput, Fault tolerance 등이 크게 달라지므로 어떻게 설계할 지는 정말 중요한 문제다.">
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/flappy1000_hu1c66c531ae5bca477a9190a15e605814_6192_300x0_resize_box_3.png" width="300"
+                            height="273" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">True Alarm</a></h1>
+            <h2 class="site-description">Will be a person who can explain difficult concepts easily and easy concepts in detail.</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/truealarm'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://twitter.com/404'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>Archives</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>Search</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>Dark Mode</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">Table of contents</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#database-management-system">Database management system</a></li>
+    <li><a href="#database-model">Database model</a></li>
+    <li><a href="#relational-model">Relational model</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/database/" >
+                Database
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/database-systems-relational-model/">Database Systems: Relational Model</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Feb 02, 2023</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    4 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>데이터베이스는 여러 사람들이 이용할 정보를 체계적으로 통합하여 데이터로 저장 및 관리하는 시스템이다. 정보를 체계적으로 관리하는 곳이라면 거의 대부분 데이터베이스를 이용한다. 대표적으로 흔히 접할 수 있는 웹 서비스에서 이용자의 정보를 저장할 때나, 스마트폰, 클라우드, 온라인 게임 등 데이터베이스를 사용하는 곳은 정말 셀 수 없이 많다.</p>
+<p>단순히 파일 시스템을 통해 정보가 저장된 데이터의 집합도 데이터베이스라고 할 수 있지만, 데이터베이스에 따라 서비스의 성능, Throughput, Fault tolerance 등이 크게 달라지므로 어떻게 설계할 지는 정말 중요한 문제다. 어떻게 데이터를 저장할 지. 어떻게 원하는 정보만 조회할 지. 어떻게 데이터의 무결성을 보장할 지. 어떻게 여러 사람이 동시에 데이터를 수정할 지. 등등 데이터베이스라는 주제에만 컴퓨터 사이언스 학문이 해결하고자 하는 어려운 문제가 잔뜩 들어있다.</p>
+<p>Carnegie Mellon University의 Database Group이 무료로 제공하는 <a class="link" href="https://www.youtube.com/watch?v=oeYBdghaIjc&amp;list=PLSE8ODhjZXjbohkNBWQs_otTrBTrjyohi&amp;index=1&amp;ab_channel=CMUDatabaseGroup"  target="_blank" rel="noopener"
+    >Database System 온라인 강의</a>를 토대로 데이터베이스에 대해 공부하며, 난제급 문제를 어떻게 해결했는지 아이디어를 배워보려고 한다. 해당 강의는 <a class="link" href="http://www.cs.cmu.edu/~pavlo/"  target="_blank" rel="noopener"
+    >Andy Pavlo</a> 교수님이 진행하며 <a class="link" href="https://15445.courses.cs.cmu.edu/fall2019/"  target="_blank" rel="noopener"
+    >강의 설명</a>과 <a class="link" href="https://15445.courses.cs.cmu.edu/fall2019/notes/"  target="_blank" rel="noopener"
+    >노트</a>까지 열람할 수 있다.</p>
+<h2 id="database-management-system">Database management system</h2>
+<p>DBMS(Database management system)은 데이터베이스의 기능을 이용자가 편리하게 사용할 수 있도록 도와주는 소프트웨어를 말한다.<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup> 데이터베이스와 DBMS 라는 말을 혼용해서 사용할 때도 있지만, 데이터베이스는 논리적인 모델에 따라 통합한 데이터를 의미한다. 이용자는 데이터베이스와 직접 대화하는 것보다, DBMS가 제공하는 인터페이스를 통해 데이터를 저장, 업데이트 및 삭제하고 데이터베이스의 권한 설정을 추가하는 등의 기능으로 유연하게 데이터를 조작할 수 있다. MySQL, PostgreSQL, MSSQL 등이 대표적인 DBMS에 속한다.</p>
+<h2 id="database-model">Database model</h2>
+<p>데이터베이스 모델은 데이터 모델(Data model)의 큰 범주로써 데이터베이스의 논리적인 구조를 결정한다.<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup> 데이터를 구조화하는 체계, 저장 방식, 그리고 데이터 조작을 위한 연산까지 데이터 조작과 관련된 모든 범주를 다룬다.</p>
+<blockquote>
+<p>📝 <strong>Note : Database system</strong></p>
+<p>Database system은 Database, Database management system, Database model를 통틀어 지칭하는 말이다. <sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup></p>
+</blockquote>
+<p>데이터베이스 및 DBMS는 데이터베이스 모델에 따라 구현되고, 모델 원칙에 부합하는 기능을 제공한다. DBMS는 최소 1개 이상의 모델을 제공하며, 여러 모델을 사용할 수 있는 DBMS라도 강점으로 미는 주력 모델이 존재한다. 데이터 모델마다 트랜잭션 속도, 확장성, 신뢰성, 안정성 간 tradeoff가 있기 때문에, 애플리케이션의 요구 사항에 맞춰 적절한 모델을 선택한다.<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup> 가장 보편적으로 사용되는 관계형 모델(Relational model)을 내세운 DBMS가 바로 그 유명한 RDBMS(Relational database management system)인 것이다.</p>
+<h2 id="relational-model">Relational model</h2>
+<p>Relational model은 <a class="link" href="https://en.wikipedia.org/wiki/Edgar_F._Codd"  target="_blank" rel="noopener"
+    >Edgar F. Codd</a>가 1969년에 처음 제시한 data model로, 그 당시 데이터가 저장된 physical layer에 데이터를 high-level에서 조작하는 logical layer가 의존적인 문제를 해결하기 위해 고안되었다. 내부 data representation이 변경되더라도, 데이터베이스를 추상화한 인터페이스 및 애플리케이션에 영향이 없는 것을 목표로 한다.<sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup></p>
+<p>Relational model의 핵심 컨셉은 데이터를 구조(<a class="link" href="https://en.wikipedia.org/wiki/Structure_%28mathematical_logic%29"  target="_blank" rel="noopener"
+    >structure</a>)로 관리하여, 데이터베이스를 <a class="link" href="https://en.wikipedia.org/wiki/First-order_logic"  target="_blank" rel="noopener"
+    >First order logic</a>에 대응되는 predicate의 모음으로 바라보는 것이다.<sup id="fnref:6"><a href="#fn:6" class="footnote-ref" role="doc-noteref">6</a></sup> 여기서 말하는 structure는 mathematical logic에서 유한한 입력 값을 갖는 <a class="link" href="https://en.wikipedia.org/wiki/Finitary"  target="_blank" rel="noopener"
+    >finitary operations</a>과 <a class="link" href="https://en.wikipedia.org/wiki/Finitary_relation"  target="_blank" rel="noopener"
+    >relation</a>으로 이루어진 집합을 의미한다.</p>
+<p>relation은 사전적인 의미보다 discrete mathematics에 나오는 개념으로 이해해야 한다. 주어진 집합 X의 원소인 a, b가 ordered pair인 (a, b) 튜플을 구성할 때, a와 b가 relation을 갖는다고 말한다. 좀 더 정확히는 인자(arity)가 2개이므로 binary relation이라 부르고, 유한한 개수 n로 이루어진 튜플은 <a class="link" href="https://en.wikipedia.org/wiki/Finitary_relation"  target="_blank" rel="noopener"
+    >finitary relation</a>이라고 부른다. 예를 들어 &ldquo;x는 y보다 작다&quot;라는 predicate를 (x, y) 관계로 표현할 수 있고, <code>R(x,y)</code> 혹은 <code>xRy</code>라고 표현한다. 이때 x, y는 non-logical symbol이고, 관계를 나타내는 symbol인 &ldquo;~는 ~보다 작다&quot;는 predicate이다. 다시 말해 predicate는 관계를 나타내는 symbol이다. <sup id="fnref:7"><a href="#fn:7" class="footnote-ref" role="doc-noteref">7</a></sup></p>
+<blockquote>
+<p>💡 <strong>Tip : Discrete Mathematics</strong></p>
+<p>혹시 predicate, proposition, quantifier, logic과 같은 개념에 대해 잘 모른다면 MIT 대학의 <a class="link" href="https://truealarm.github.io/p/mathematics-for-computer-science-propositions/"  target="_blank" rel="noopener"
+    >Mathematics For Computer Science</a> 강의나 TrevTutor의 <a class="link" href="https://www.youtube.com/watch?v=tyDKR4FG3Yw&amp;list=PLDDGPdw7e6Ag1EIznZ-m-qXu4XX3A0cIz&amp;ab_channel=TrevTutor"  target="_blank" rel="noopener"
+    >Discrete mathematics</a> 강의가 도움이 될 것이다.</p>
+</blockquote>
+<p>관계형 모델이라는 말만 보고 이해하려 하면, 데이터가 서로 참조(reference)하는 등의 연산으로 데이터 간 관계 형성이 가능한 모델로 생각할 수도 있다. (내가 그랬다) relation의 수학적 의미를 먼저 이해하는 게, 관계형 데이터베이스의 핵심 아이디어를 이해할 수 있는 지름길이다.</p>
+<p>결국 Relational model의 핵심 컨셉은 데이터가 n개의 튜플로 묶여 하나의 row=relation을 이루고, 이 relation을 나타내는 predicate가 테이블인 것이다. 이게 처음에 말했던 데이터를 구조(structure)로 관리하여, 데이터베이스를 First order logic에 대응되는 predicate의 모음으로 바라본다는 말에 의미이다.</p>
+<p>또 다른 Relational model의 핵심 컨셉 중 하나는 데이터베이스의 일관성(consistency) 혹은 integrity를 애플리케이션이 아닌, 데이터베이스의 constraints가 보장한다는 것이다. 지금의 column이라 불리는 attribute마다 int, string 등의 타입을 강제하거나 primary key, unique key가 예시에 포함된다.</p>
+<p>마지막으로 Relational model은 용이한 데이터 조작을 위한 DML(Data Manipulation Languages)를 지원하는 특징이 있다. DML는 imperative, declarative인 지에 따라 각각 Relational algebra, Relational calculus로 나뉜다. Relational algebra는 데이터를 어떻게(how) 얻어올 지, 수행할 연산을 스텝별로 지정하는 반면에 Relational calculus는 어떤(what) 데이터를 얻어와야 하는지에 초점이 맞춰져 있다.</p>
+<p>Relational algebra에는 우리가 SQL 쿼리에서 사용하는 Select, Union, Join, Difference, Projection 등의 집합 연산이 포함되고, 쿼리를 작성할 때 이 연산들을 잘 조합해서 사용한다. 쿼리도 마찬가지로 하나의 predicate라고 볼 수 있어 Relational model은 기존 relation을 입력으로 새로운 relation이 생성해나가는 모델이기도 하다.<sup id="fnref:8"><a href="#fn:8" class="footnote-ref" role="doc-noteref">8</a></sup></p>
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p><a class="link" href="https://en.wikipedia.org/wiki/Database#Database_management_system:~:text=Connolly%20and%20Begg%20define%20database%20management%20system%20%28DBMS%29%20as%20a%20%22software%20system%20that%20enables%20users%20to%20define%2C%20create%2C%20maintain%20and%20control%20access%20to%20the%20database%22."  target="_blank" rel="noopener"
+    >Wikipeida: Database management system</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2">
+<p><a class="link" href="https://en.wikipedia.org/wiki/Database_model#:~:text=A%20database%20model%20is%20a%20type%20of%20data%20model%20that%20determines%20the%20logical%20structure%20of%20a%20database"  target="_blank" rel="noopener"
+    >Wikipeida: Database model</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3">
+<p>Beynon-Davies, Paul (2003). Database Systems (3rd ed.). Palgrave Macmillan. ISBN 978-1403916013&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:4">
+<p><a class="link" href="https://en.wikipedia.org/wiki/Database_model#Relationships_and_functions:~:text=The%20optimal%20structure%20depends%20on%20the%20natural%20organization%20of%20the%20application%27s%20data%2C%20and%20on%20the%20application%27s%20requirements%2C%20which%20include%20transaction%20rate%20%28speed%29%2C%20reliability%2C%20maintainability%2C%20scalability%2C%20and%20cost"  target="_blank" rel="noopener"
+    >Wikipeida: Database model. Relationships and functions</a>&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:5">
+<p><a class="link" href="https://www.seas.upenn.edu/~zives/03f/cis550/codd.pdf"  target="_blank" rel="noopener"
+    >E.F. Codd (1970). &ldquo;A relational model of data for large shared data banks&rdquo;. p377-387</a>&#160;<a href="#fnref:5" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:6">
+<p><a class="link" href="https://en.wikipedia.org/wiki/Relational_model#Overview:~:text=The%20central%20idea%20of%20a%20relational%20model%20is%20to%20describe%20a%20database%20as%20a%20collection%20of%20predicates%20over%20a%20finite%20set%20of%20predicate%20variables"  target="_blank" rel="noopener"
+    >Wikipeida: Relational model. Overview</a>&#160;<a href="#fnref:6" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:7">
+<p><a class="link" href="https://en.wikipedia.org/wiki/Predicate_%28mathematical_logic%29#:~:text=a%20predicate%20is%20a%20symbol%20that%20represents%20a%20property%20or%20a%20relation"  target="_blank" rel="noopener"
+    >Wikipedia: Predicate (mathematical logic)</a>&#160;<a href="#fnref:7" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:8">
+<p><a class="link" href="https://en.wikipedia.org/wiki/Relational_model#:~:text=A%20request%20for%20information%20from%20the%20database%20%28a%20database%20query%29%20is%20also%20a%20predicate"  target="_blank" rel="noopener"
+    >Wikipedia: Relationa model. Overview</a>&#160;<a href="#fnref:8" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "truealarm-github-io" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2022 - 
+        
+        2023 True Alarm
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.16.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

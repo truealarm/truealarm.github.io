@@ -6,7 +6,88 @@
         <description>Recent content on True Alarm</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>en-us</language>
-        <lastBuildDate>Wed, 01 Feb 2023 19:50:08 +0900</lastBuildDate><atom:link href="https://truealarm.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Thu, 02 Feb 2023 16:41:20 +0900</lastBuildDate><atom:link href="https://truealarm.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Database Systems: Relational Model</title>
+        <link>https://truealarm.github.io/p/database-systems-relational-model/</link>
+        <pubDate>Thu, 02 Feb 2023 16:41:20 +0900</pubDate>
+        
+        <guid>https://truealarm.github.io/p/database-systems-relational-model/</guid>
+        <description>&lt;p&gt;데이터베이스는 여러 사람들이 이용할 정보를 체계적으로 통합하여 데이터로 저장 및 관리하는 시스템이다. 정보를 체계적으로 관리하는 곳이라면 거의 대부분 데이터베이스를 이용한다. 대표적으로 흔히 접할 수 있는 웹 서비스에서 이용자의 정보를 저장할 때나, 스마트폰, 클라우드, 온라인 게임 등 데이터베이스를 사용하는 곳은 정말 셀 수 없이 많다.&lt;/p&gt;
+&lt;p&gt;단순히 파일 시스템을 통해 정보가 저장된 데이터의 집합도 데이터베이스라고 할 수 있지만, 데이터베이스에 따라 서비스의 성능, Throughput, Fault tolerance 등이 크게 달라지므로 어떻게 설계할 지는 정말 중요한 문제다. 어떻게 데이터를 저장할 지. 어떻게 원하는 정보만 조회할 지. 어떻게 데이터의 무결성을 보장할 지. 어떻게 여러 사람이 동시에 데이터를 수정할 지. 등등 데이터베이스라는 주제에만 컴퓨터 사이언스 학문이 해결하고자 하는 어려운 문제가 잔뜩 들어있다.&lt;/p&gt;
+&lt;p&gt;Carnegie Mellon University의 Database Group이 무료로 제공하는 &lt;a class=&#34;link&#34; href=&#34;https://www.youtube.com/watch?v=oeYBdghaIjc&amp;amp;list=PLSE8ODhjZXjbohkNBWQs_otTrBTrjyohi&amp;amp;index=1&amp;amp;ab_channel=CMUDatabaseGroup&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Database System 온라인 강의&lt;/a&gt;를 토대로 데이터베이스에 대해 공부하며, 난제급 문제를 어떻게 해결했는지 아이디어를 배워보려고 한다. 해당 강의는 &lt;a class=&#34;link&#34; href=&#34;http://www.cs.cmu.edu/~pavlo/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Andy Pavlo&lt;/a&gt; 교수님이 진행하며 &lt;a class=&#34;link&#34; href=&#34;https://15445.courses.cs.cmu.edu/fall2019/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;강의 설명&lt;/a&gt;과 &lt;a class=&#34;link&#34; href=&#34;https://15445.courses.cs.cmu.edu/fall2019/notes/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;노트&lt;/a&gt;까지 열람할 수 있다.&lt;/p&gt;
+&lt;h2 id=&#34;database-management-system&#34;&gt;Database management system&lt;/h2&gt;
+&lt;p&gt;DBMS(Database management system)은 데이터베이스의 기능을 이용자가 편리하게 사용할 수 있도록 도와주는 소프트웨어를 말한다.&lt;sup id=&#34;fnref:1&#34;&gt;&lt;a href=&#34;#fn:1&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;1&lt;/a&gt;&lt;/sup&gt; 데이터베이스와 DBMS 라는 말을 혼용해서 사용할 때도 있지만, 데이터베이스는 논리적인 모델에 따라 통합한 데이터를 의미한다. 이용자는 데이터베이스와 직접 대화하는 것보다, DBMS가 제공하는 인터페이스를 통해 데이터를 저장, 업데이트 및 삭제하고 데이터베이스의 권한 설정을 추가하는 등의 기능으로 유연하게 데이터를 조작할 수 있다. MySQL, PostgreSQL, MSSQL 등이 대표적인 DBMS에 속한다.&lt;/p&gt;
+&lt;h2 id=&#34;database-model&#34;&gt;Database model&lt;/h2&gt;
+&lt;p&gt;데이터베이스 모델은 데이터 모델(Data model)의 큰 범주로써 데이터베이스의 논리적인 구조를 결정한다.&lt;sup id=&#34;fnref:2&#34;&gt;&lt;a href=&#34;#fn:2&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;2&lt;/a&gt;&lt;/sup&gt; 데이터를 구조화하는 체계, 저장 방식, 그리고 데이터 조작을 위한 연산까지 데이터 조작과 관련된 모든 범주를 다룬다.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;📝 &lt;strong&gt;Note : Database system&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Database system은 Database, Database management system, Database model를 통틀어 지칭하는 말이다. &lt;sup id=&#34;fnref:3&#34;&gt;&lt;a href=&#34;#fn:3&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;3&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;데이터베이스 및 DBMS는 데이터베이스 모델에 따라 구현되고, 모델 원칙에 부합하는 기능을 제공한다. DBMS는 최소 1개 이상의 모델을 제공하며, 여러 모델을 사용할 수 있는 DBMS라도 강점으로 미는 주력 모델이 존재한다. 데이터 모델마다 트랜잭션 속도, 확장성, 신뢰성, 안정성 간 tradeoff가 있기 때문에, 애플리케이션의 요구 사항에 맞춰 적절한 모델을 선택한다.&lt;sup id=&#34;fnref:4&#34;&gt;&lt;a href=&#34;#fn:4&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;4&lt;/a&gt;&lt;/sup&gt; 가장 보편적으로 사용되는 관계형 모델(Relational model)을 내세운 DBMS가 바로 그 유명한 RDBMS(Relational database management system)인 것이다.&lt;/p&gt;
+&lt;h2 id=&#34;relational-model&#34;&gt;Relational model&lt;/h2&gt;
+&lt;p&gt;Relational model은 &lt;a class=&#34;link&#34; href=&#34;https://en.wikipedia.org/wiki/Edgar_F._Codd&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Edgar F. Codd&lt;/a&gt;가 1969년에 처음 제시한 data model로, 그 당시 데이터가 저장된 physical layer에 데이터를 high-level에서 조작하는 logical layer가 의존적인 문제를 해결하기 위해 고안되었다. 내부 data representation이 변경되더라도, 데이터베이스를 추상화한 인터페이스 및 애플리케이션에 영향이 없는 것을 목표로 한다.&lt;sup id=&#34;fnref:5&#34;&gt;&lt;a href=&#34;#fn:5&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;5&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+&lt;p&gt;Relational model의 핵심 컨셉은 데이터를 구조(&lt;a class=&#34;link&#34; href=&#34;https://en.wikipedia.org/wiki/Structure_%28mathematical_logic%29&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;structure&lt;/a&gt;)로 관리하여, 데이터베이스를 &lt;a class=&#34;link&#34; href=&#34;https://en.wikipedia.org/wiki/First-order_logic&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;First order logic&lt;/a&gt;에 대응되는 predicate의 모음으로 바라보는 것이다.&lt;sup id=&#34;fnref:6&#34;&gt;&lt;a href=&#34;#fn:6&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;6&lt;/a&gt;&lt;/sup&gt; 여기서 말하는 structure는 mathematical logic에서 유한한 입력 값을 갖는 &lt;a class=&#34;link&#34; href=&#34;https://en.wikipedia.org/wiki/Finitary&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;finitary operations&lt;/a&gt;과 &lt;a class=&#34;link&#34; href=&#34;https://en.wikipedia.org/wiki/Finitary_relation&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;relation&lt;/a&gt;으로 이루어진 집합을 의미한다.&lt;/p&gt;
+&lt;p&gt;relation은 사전적인 의미보다 discrete mathematics에 나오는 개념으로 이해해야 한다. 주어진 집합 X의 원소인 a, b가 ordered pair인 (a, b) 튜플을 구성할 때, a와 b가 relation을 갖는다고 말한다. 좀 더 정확히는 인자(arity)가 2개이므로 binary relation이라 부르고, 유한한 개수 n로 이루어진 튜플은 &lt;a class=&#34;link&#34; href=&#34;https://en.wikipedia.org/wiki/Finitary_relation&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;finitary relation&lt;/a&gt;이라고 부른다. 예를 들어 &amp;ldquo;x는 y보다 작다&amp;quot;라는 predicate를 (x, y) 관계로 표현할 수 있고, &lt;code&gt;R(x,y)&lt;/code&gt; 혹은 &lt;code&gt;xRy&lt;/code&gt;라고 표현한다. 이때 x, y는 non-logical symbol이고, 관계를 나타내는 symbol인 &amp;ldquo;~는 ~보다 작다&amp;quot;는 predicate이다. 다시 말해 predicate는 관계를 나타내는 symbol이다. &lt;sup id=&#34;fnref:7&#34;&gt;&lt;a href=&#34;#fn:7&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;7&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;💡 &lt;strong&gt;Tip : Discrete Mathematics&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;혹시 predicate, proposition, quantifier, logic과 같은 개념에 대해 잘 모른다면 MIT 대학의 &lt;a class=&#34;link&#34; href=&#34;https://truealarm.github.io/p/mathematics-for-computer-science-propositions/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Mathematics For Computer Science&lt;/a&gt; 강의나 TrevTutor의 &lt;a class=&#34;link&#34; href=&#34;https://www.youtube.com/watch?v=tyDKR4FG3Yw&amp;amp;list=PLDDGPdw7e6Ag1EIznZ-m-qXu4XX3A0cIz&amp;amp;ab_channel=TrevTutor&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Discrete mathematics&lt;/a&gt; 강의가 도움이 될 것이다.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;관계형 모델이라는 말만 보고 이해하려 하면, 데이터가 서로 참조(reference)하는 등의 연산으로 데이터 간 관계 형성이 가능한 모델로 생각할 수도 있다. (내가 그랬다) relation의 수학적 의미를 먼저 이해하는 게, 관계형 데이터베이스의 핵심 아이디어를 이해할 수 있는 지름길이다.&lt;/p&gt;
+&lt;p&gt;결국 Relational model의 핵심 컨셉은 데이터가 n개의 튜플로 묶여 하나의 row=relation을 이루고, 이 relation을 나타내는 predicate가 테이블인 것이다. 이게 처음에 말했던 데이터를 구조(structure)로 관리하여, 데이터베이스를 First order logic에 대응되는 predicate의 모음으로 바라본다는 말에 의미이다.&lt;/p&gt;
+&lt;p&gt;또 다른 Relational model의 핵심 컨셉 중 하나는 데이터베이스의 일관성(consistency) 혹은 integrity를 애플리케이션이 아닌, 데이터베이스의 constraints가 보장한다는 것이다. 지금의 column이라 불리는 attribute마다 int, string 등의 타입을 강제하거나 primary key, unique key가 예시에 포함된다.&lt;/p&gt;
+&lt;p&gt;마지막으로 Relational model은 용이한 데이터 조작을 위한 DML(Data Manipulation Languages)를 지원하는 특징이 있다. DML는 imperative, declarative인 지에 따라 각각 Relational algebra, Relational calculus로 나뉜다. Relational algebra는 데이터를 어떻게(how) 얻어올 지, 수행할 연산을 스텝별로 지정하는 반면에 Relational calculus는 어떤(what) 데이터를 얻어와야 하는지에 초점이 맞춰져 있다.&lt;/p&gt;
+&lt;p&gt;Relational algebra에는 우리가 SQL 쿼리에서 사용하는 Select, Union, Join, Difference, Projection 등의 집합 연산이 포함되고, 쿼리를 작성할 때 이 연산들을 잘 조합해서 사용한다. 쿼리도 마찬가지로 하나의 predicate라고 볼 수 있어 Relational model은 기존 relation을 입력으로 새로운 relation이 생성해나가는 모델이기도 하다.&lt;sup id=&#34;fnref:8&#34;&gt;&lt;a href=&#34;#fn:8&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;8&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+&lt;div class=&#34;footnotes&#34; role=&#34;doc-endnotes&#34;&gt;
+&lt;hr&gt;
+&lt;ol&gt;
+&lt;li id=&#34;fn:1&#34;&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://en.wikipedia.org/wiki/Database#Database_management_system:~:text=Connolly%20and%20Begg%20define%20database%20management%20system%20%28DBMS%29%20as%20a%20%22software%20system%20that%20enables%20users%20to%20define%2C%20create%2C%20maintain%20and%20control%20access%20to%20the%20database%22.&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Wikipeida: Database management system&lt;/a&gt;&amp;#160;&lt;a href=&#34;#fnref:1&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id=&#34;fn:2&#34;&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://en.wikipedia.org/wiki/Database_model#:~:text=A%20database%20model%20is%20a%20type%20of%20data%20model%20that%20determines%20the%20logical%20structure%20of%20a%20database&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Wikipeida: Database model&lt;/a&gt;&amp;#160;&lt;a href=&#34;#fnref:2&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id=&#34;fn:3&#34;&gt;
+&lt;p&gt;Beynon-Davies, Paul (2003). Database Systems (3rd ed.). Palgrave Macmillan. ISBN 978-1403916013&amp;#160;&lt;a href=&#34;#fnref:3&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id=&#34;fn:4&#34;&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://en.wikipedia.org/wiki/Database_model#Relationships_and_functions:~:text=The%20optimal%20structure%20depends%20on%20the%20natural%20organization%20of%20the%20application%27s%20data%2C%20and%20on%20the%20application%27s%20requirements%2C%20which%20include%20transaction%20rate%20%28speed%29%2C%20reliability%2C%20maintainability%2C%20scalability%2C%20and%20cost&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Wikipeida: Database model. Relationships and functions&lt;/a&gt;&amp;#160;&lt;a href=&#34;#fnref:4&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id=&#34;fn:5&#34;&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://www.seas.upenn.edu/~zives/03f/cis550/codd.pdf&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;E.F. Codd (1970). &amp;ldquo;A relational model of data for large shared data banks&amp;rdquo;. p377-387&lt;/a&gt;&amp;#160;&lt;a href=&#34;#fnref:5&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id=&#34;fn:6&#34;&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://en.wikipedia.org/wiki/Relational_model#Overview:~:text=The%20central%20idea%20of%20a%20relational%20model%20is%20to%20describe%20a%20database%20as%20a%20collection%20of%20predicates%20over%20a%20finite%20set%20of%20predicate%20variables&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Wikipeida: Relational model. Overview&lt;/a&gt;&amp;#160;&lt;a href=&#34;#fnref:6&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id=&#34;fn:7&#34;&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://en.wikipedia.org/wiki/Predicate_%28mathematical_logic%29#:~:text=a%20predicate%20is%20a%20symbol%20that%20represents%20a%20property%20or%20a%20relation&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Wikipedia: Predicate (mathematical logic)&lt;/a&gt;&amp;#160;&lt;a href=&#34;#fnref:7&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id=&#34;fn:8&#34;&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://en.wikipedia.org/wiki/Relational_model#:~:text=A%20request%20for%20information%20from%20the%20database%20%28a%20database%20query%29%20is%20also%20a%20predicate&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Wikipedia: Relationa model. Overview&lt;/a&gt;&amp;#160;&lt;a href=&#34;#fnref:8&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
+        </item>
+        <item>
         <title>Kotlin in Action: Defining and calling functions</title>
         <link>https://truealarm.github.io/p/kotlin-in-action-defining-and-calling-functions/</link>
         <pubDate>Wed, 01 Feb 2023 19:50:08 +0900</pubDate>
